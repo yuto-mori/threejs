@@ -1,0 +1,7 @@
+node_modules
+.DS_Store
+.ash_history
+.bash_history
+Thumbs.db
+npm-debug
+npm-debug.log*
