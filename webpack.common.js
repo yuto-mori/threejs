@@ -19,6 +19,6 @@ module.exports = {
   },
   output: {
     //  出力ファイルのディレクトリ名
-    path: `${__dirname}/dist/assets/js`,
+    path: `${__dirname}/threejs/assets/js`,
   },
 };
