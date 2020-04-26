@@ -50689,7 +50689,7 @@ window.addEventListener('DOMContentLoaded', function () {
     sphere.position.z = -5;
     scene.add(sphere);
     // 平行光源を生成
-    var light = new three__WEBPACK_IMPORTED_MODULE_0__["DirectionalLight"](0xff0000);
+    var light = new three__WEBPACK_IMPORTED_MODULE_0__["DirectionalLight"](0xffffff);
     light.position.set(1, 1, 1);
     scene.add(light);
     var tick = function () {
