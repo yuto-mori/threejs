@@ -18,7 +18,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // 箱を作成
   const sphereGeometry = new THREE.SphereGeometry(250, 10, 10);
   const sphereMaterial = new THREE.MeshBasicMaterial({
-    color: 0xf00f00,
+    color: 0xffffff,
     wireframe: true,
   });
   const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);

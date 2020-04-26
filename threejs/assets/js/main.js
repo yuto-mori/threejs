@@ -50682,7 +50682,7 @@ window.addEventListener('DOMContentLoaded', function () {
     // 箱を作成
     var sphereGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["SphereGeometry"](250, 10, 10);
     var sphereMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
-        color: 0xf00f00,
+        color: 0xffffff,
         wireframe: true,
     });
     var sphere = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](sphereGeometry, sphereMaterial);
