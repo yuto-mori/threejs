@@ -18,7 +18,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // 箱を作成
   const sphereGeometry = new THREE.SphereGeometry(250, 10, 10);
   const sphereMaterial = new THREE.MeshBasicMaterial({
-    color: 0xffffff,
+    color: 0xf00f00,
     wireframe: true,
   });
   const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
@@ -26,7 +26,7 @@ window.addEventListener('DOMContentLoaded', () => {
   scene.add(sphere);
 
   // 平行光源を生成
-  const light = new THREE.DirectionalLight(0xf00f00);
+  const light = new THREE.DirectionalLight(0xffffff);
   light.position.set(1, 1, 1);
   scene.add(light);
 
