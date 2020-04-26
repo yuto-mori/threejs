@@ -4,12 +4,12 @@ const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
 
 module.exports = {
-    plugins: [
-        autoprefixer({
-            grid: 'autoplace'
-        }),
-        cssnano({
-            autoprefixer: false
-        })
-    ]
+  plugins: [
+    autoprefixer({
+      grid: 'autoplace',
+    }),
+    cssnano({
+      autoprefixer: false,
+    }),
+  ],
 };

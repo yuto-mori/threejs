@@ -50682,14 +50682,14 @@ window.addEventListener('DOMContentLoaded', function () {
     // 箱を作成
     var sphereGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["SphereGeometry"](250, 10, 10);
     var sphereMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
-        color: 0xffffff,
+        color: 0xffe600,
         wireframe: true,
     });
     var sphere = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](sphereGeometry, sphereMaterial);
     sphere.position.z = -5;
     scene.add(sphere);
     // 平行光源を生成
-    var light = new three__WEBPACK_IMPORTED_MODULE_0__["DirectionalLight"](0xffffff);
+    var light = new three__WEBPACK_IMPORTED_MODULE_0__["DirectionalLight"](0xff0000);
     light.position.set(1, 1, 1);
     scene.add(light);
     var tick = function () {

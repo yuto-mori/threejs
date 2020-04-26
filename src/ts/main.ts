@@ -26,7 +26,7 @@ window.addEventListener('DOMContentLoaded', () => {
   scene.add(sphere);
 
   // 平行光源を生成
-  const light = new THREE.DirectionalLight(0xffffff);
+  const light = new THREE.DirectionalLight(0xff0000);
   light.position.set(1, 1, 1);
   scene.add(light);
 
