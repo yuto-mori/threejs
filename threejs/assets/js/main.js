@@ -50667,7 +50667,7 @@ if ( typeof __THREE_DEVTOOLS__ !== 'undefined' ) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 
-window.addEventListener('DOMContentLoaded', function () {
+window.addEventListener('load', function () {
     // レンダラーを作成
     var renderer = new three__WEBPACK_IMPORTED_MODULE_0__["WebGLRenderer"]();
     // レンダラーのサイズを設定
@@ -50683,36 +50683,25 @@ window.addEventListener('DOMContentLoaded', function () {
     var light = new three__WEBPACK_IMPORTED_MODULE_0__["DirectionalLight"](0xffffff);
     light.position.set(1, 1, 1);
     scene.add(light);
-    // 箱を作成
-    var planeGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["PlaneGeometry"](600, 600, 2, 2);
-    function createMesh(geom) {
-        var textureLoader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
-        var texture = textureLoader.load('/threejs/assets/img/carousel01/01.jpg', function () {
-            var mat = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]();
-            mat.map = texture;
-            //参考 https://qiita.com/Urushibara01/items/d828e853fc5c4626647a
-            console.log(geom.faces);
-            console.log(geom.faceVertexUvs);
-            geom.faceVertexUvs[0][0][0].x = 0;
-            geom.faceVertexUvs[0][0][0].y = 1;
-            geom.faceVertexUvs[0][0][1].x = 0;
-            geom.faceVertexUvs[0][0][1].y = 0;
-            geom.faceVertexUvs[0][0][2].x = 1;
-            geom.faceVertexUvs[0][0][2].y = 1;
-            geom.faceVertexUvs[0][1][0].x = 0;
-            geom.faceVertexUvs[0][1][0].y = 0;
-            geom.faceVertexUvs[0][1][1].x = 1;
-            geom.faceVertexUvs[0][1][1].y = 0;
-            geom.faceVertexUvs[0][1][2].x = 1;
-            geom.faceVertexUvs[0][1][2].y = 1;
-            geom.uvsNeedUpdate = true; //なくても行けるけど、requestAnimationFrame を使うとき必要なのかも
-            var mesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geom, mat);
-            mesh.position.z = 0;
-            scene.add(mesh);
-            renderer.render(scene, camera);
+    var createParticles = function () {
+        var geom = new three__WEBPACK_IMPORTED_MODULE_0__["Geometry"]();
+        var material = new three__WEBPACK_IMPORTED_MODULE_0__["PointsMaterial"]({
+            size: 20,
+            vertexColors: true,
+            color: 0xffffff,
         });
-    }
-    createMesh(planeGeometry);
+        for (var x = -15; x < 15; x++) {
+            for (var y = -15; y < 15; y++) {
+                var particle = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](x * 20, y * 20, 0);
+                geom.vertices.push(particle);
+                geom.colors.push(new three__WEBPACK_IMPORTED_MODULE_0__["Color"](Math.random() * 0x00ffff));
+            }
+        }
+        var cloud = new three__WEBPACK_IMPORTED_MODULE_0__["Points"](geom, material);
+        scene.add(cloud);
+    };
+    createParticles();
+    renderer.render(scene, camera);
 });
 
 
