@@ -16,25 +16,34 @@ window.addEventListener('DOMContentLoaded', () => {
   camera.position.set(0, 0, 1000);
 
   // 箱を作成
-  const sphereGeometry = new THREE.SphereGeometry(250, 10, 10);
-  const sphereMaterial = new THREE.MeshBasicMaterial({
-    color: 0xf00f00,
-    wireframe: true,
-  });
-  const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-  sphere.position.z = -5;
-  scene.add(sphere);
+  const planeGeometry = new THREE.PlaneGeometry(500, 500, 10, 10);
+
+  function createMesh(geom) {
+    const textureLoader = new THREE.TextureLoader();
+    const texture = textureLoader.load('/threejs/assets/img/carousel01/01.jpg');
+    const mat = new THREE.MeshBasicMaterial();
+    mat.map = texture;
+
+    const mesh = new THREE.Mesh(geom, mat);
+    return mesh;
+  }
+
+  const plane = createMesh(planeGeometry);
+
+  plane.position.z = 0;
+  scene.add(plane);
 
   // 平行光源を生成
   const light = new THREE.DirectionalLight(0xffffff);
   light.position.set(1, 1, 1);
   scene.add(light);
 
+
   const tick = (): void => {
     requestAnimationFrame(tick);
 
-    sphere.rotation.x += 0.02;
-    sphere.rotation.y += 0.02;
+    plane.rotation.x += 0.02;
+    plane.rotation.y += 0.02;
 
     // 描画
     renderer.render(scene, camera);

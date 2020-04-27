@@ -50680,22 +50680,26 @@ window.addEventListener('DOMContentLoaded', function () {
     var camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](45, 600 / 600, 1, 10000);
     camera.position.set(0, 0, 1000);
     // 箱を作成
-    var sphereGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["SphereGeometry"](250, 10, 10);
-    var sphereMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]({
-        color: 0xf00f00,
-        wireframe: true,
-    });
-    var sphere = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](sphereGeometry, sphereMaterial);
-    sphere.position.z = -5;
-    scene.add(sphere);
+    var planeGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["PlaneGeometry"](500, 500, 10, 10);
+    function createMesh(geom) {
+        var textureLoader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
+        var texture = textureLoader.load('/threejs/assets/img/carousel01/01.jpg');
+        var mat = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]();
+        mat.map = texture;
+        var mesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geom, mat);
+        return mesh;
+    }
+    var plane = createMesh(planeGeometry);
+    plane.position.z = 0;
+    scene.add(plane);
     // 平行光源を生成
     var light = new three__WEBPACK_IMPORTED_MODULE_0__["DirectionalLight"](0xffffff);
     light.position.set(1, 1, 1);
     scene.add(light);
     var tick = function () {
         requestAnimationFrame(tick);
-        sphere.rotation.x += 0.02;
-        sphere.rotation.y += 0.02;
+        plane.rotation.x += 0.02;
+        plane.rotation.y += 0.02;
         // 描画
         renderer.render(scene, camera);
     };
