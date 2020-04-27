@@ -50684,19 +50684,35 @@ window.addEventListener('DOMContentLoaded', function () {
     light.position.set(1, 1, 1);
     scene.add(light);
     // 箱を作成
-    var planeGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["PlaneGeometry"](500, 500, 500, 500);
+    var planeGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["PlaneGeometry"](600, 600, 2, 2);
     function createMesh(geom) {
         var textureLoader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
         var texture = textureLoader.load('/threejs/assets/img/carousel01/01.jpg', function () {
             var mat = new three__WEBPACK_IMPORTED_MODULE_0__["MeshBasicMaterial"]();
             mat.map = texture;
+            //参考 https://qiita.com/Urushibara01/items/d828e853fc5c4626647a
+            console.log(geom.faces);
+            console.log(geom.faceVertexUvs);
+            geom.faceVertexUvs[0][0][0].x = 0;
+            geom.faceVertexUvs[0][0][0].y = 1;
+            geom.faceVertexUvs[0][0][1].x = 0;
+            geom.faceVertexUvs[0][0][1].y = 0;
+            geom.faceVertexUvs[0][0][2].x = 1;
+            geom.faceVertexUvs[0][0][2].y = 1;
+            geom.faceVertexUvs[0][1][0].x = 0;
+            geom.faceVertexUvs[0][1][0].y = 0;
+            geom.faceVertexUvs[0][1][1].x = 1;
+            geom.faceVertexUvs[0][1][1].y = 0;
+            geom.faceVertexUvs[0][1][2].x = 1;
+            geom.faceVertexUvs[0][1][2].y = 1;
+            geom.uvsNeedUpdate = true; //なくても行けるけど、requestAnimationFrame を使うとき必要なのかも
             var mesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geom, mat);
             mesh.position.z = 0;
             scene.add(mesh);
             renderer.render(scene, camera);
         });
     }
-    var plane = createMesh(planeGeometry);
+    createMesh(planeGeometry);
 });
 
 
