@@ -50667,7 +50667,7 @@ if ( typeof __THREE_DEVTOOLS__ !== 'undefined' ) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 
-window.addEventListener('load', function () {
+window.addEventListener('DOMContentLoaded', function () {
     // レンダラーを作成
     var renderer = new three__WEBPACK_IMPORTED_MODULE_0__["WebGLRenderer"]();
     // レンダラーのサイズを設定
@@ -50677,31 +50677,36 @@ window.addEventListener('load', function () {
     // シーンを作成
     var scene = new three__WEBPACK_IMPORTED_MODULE_0__["Scene"]();
     // カメラを作成
-    var camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](45, 600 / 600, 0.1, 2000);
-    camera.position.set(0, 0, 1000);
+    var camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](45, 600 / 600, 1, 2000);
+    camera.position.set(0, 0, 100); //1000から100に変えてカメラを近づけた
     // 平行光源を生成
     var light = new three__WEBPACK_IMPORTED_MODULE_0__["DirectionalLight"](0xffffff);
     light.position.set(1, 1, 1);
     scene.add(light);
-    var createParticles = function () {
-        var geom = new three__WEBPACK_IMPORTED_MODULE_0__["Geometry"]();
-        var material = new three__WEBPACK_IMPORTED_MODULE_0__["PointsMaterial"]({
-            size: 20,
-            vertexColors: true,
-            color: 0xffffff,
-        });
-        for (var x = -15; x < 15; x++) {
-            for (var y = -15; y < 15; y++) {
-                var particle = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](x * 20, y * 20, 0);
-                geom.vertices.push(particle);
-                geom.colors.push(new three__WEBPACK_IMPORTED_MODULE_0__["Color"](Math.random() * 0x00ffff));
+    //画像を読み込む
+    var textureLoader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
+    var texture = textureLoader.load('/threejs/assets/img/carousel01/01.jpg', onRender);
+    function onRender() {
+        var createParticles = function () {
+            var geom = new three__WEBPACK_IMPORTED_MODULE_0__["Geometry"]();
+            var material = new three__WEBPACK_IMPORTED_MODULE_0__["PointsMaterial"]({
+                size: 20,
+                color: 0xffffff,
+                map: texture,
+            });
+            for (var x = -15; x < 15; x++) {
+                for (var y = -15; y < 15; y++) {
+                    var particle = new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"](x * 20, y * 20, 0);
+                    geom.vertices.push(particle);
+                    geom.colors.push(new three__WEBPACK_IMPORTED_MODULE_0__["Color"](Math.random() * 0x00ffff));
+                }
             }
-        }
-        var cloud = new three__WEBPACK_IMPORTED_MODULE_0__["Points"](geom, material);
-        scene.add(cloud);
-    };
-    createParticles();
-    renderer.render(scene, camera);
+            var cloud = new three__WEBPACK_IMPORTED_MODULE_0__["Points"](geom, material);
+            scene.add(cloud);
+        };
+        createParticles();
+        renderer.render(scene, camera);
+    }
 });
 
 

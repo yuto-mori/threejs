@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-window.addEventListener('load', () => {
+window.addEventListener('DOMContentLoaded', () => {
   // レンダラーを作成
   const renderer = new THREE.WebGLRenderer();
   // レンダラーのサイズを設定
@@ -12,20 +12,28 @@ window.addEventListener('load', () => {
   const scene = new THREE.Scene();
 
   // カメラを作成
-  const camera = new THREE.PerspectiveCamera(45, 600 / 600, 0.1, 2000);
-  camera.position.set(0, 0, 1000);
+  const camera = new THREE.PerspectiveCamera(45, 600 / 600, 1, 2000);
+  camera.position.set(0, 0, 100);//1000から100に変えてカメラを近づけた
 
   // 平行光源を生成
   const light = new THREE.DirectionalLight(0xffffff);
   light.position.set(1, 1, 1);
   scene.add(light);
 
+  //画像を読み込む
+  const textureLoader = new THREE.TextureLoader();
+  var texture = textureLoader.load(
+    '/threejs/assets/img/carousel01/01.jpg',
+    onRender
+    );
+
+  function onRender(){
   const createParticles = (): void => {
     const geom = new THREE.Geometry();
     const material = new THREE.PointsMaterial({
       size: 20,
-      vertexColors: true,
       color: 0xffffff,
+      map:texture,
     });
 
     for (let x = -15; x < 15; x++) {
@@ -40,4 +48,5 @@ window.addEventListener('load', () => {
   };
   createParticles();
   renderer.render(scene, camera);
+  }
 });
