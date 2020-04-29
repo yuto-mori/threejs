@@ -29,17 +29,22 @@ window.addEventListener('DOMContentLoaded', () => {
   );
 
   function init(vertexShader, fragmentShader): void {
-    const cubeGeometry = new THREE.PlaneGeometry(100, 100);
-
+    const geometry = new THREE.BufferGeometry();
+    const verticesBase = [];
+    for (let i = 0; i < 5000; i++) {
+      const x = Math.floor(Math.random() * 1000 - 500);
+      const y = Math.floor(Math.random() * 1000 - 500);
+      const z = Math.floor(Math.random() * 1000 - 500);
+      verticesBase.push(x, y, z);
+    }
+    const vertices = new Float32Array(verticesBase);
+    geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
     const uniforms = {
-      time: { type: 'f', value: 0.2 },
-      scale: { type: 'f', value: 0.2 },
-      alpha: { type: 'f', value: 0.6 },
-      resolution: { type: 'v2', value: new THREE.Vector2() },
+      size: {
+        type: 'f',
+        value: 10.0,
+      },
     };
-
-    uniforms.resolution.value.x = window.innerWidth;
-    uniforms.resolution.value.y = window.innerHeight;
 
     const meshMaterial = new THREE.ShaderMaterial({
       uniforms: uniforms,
@@ -48,7 +53,7 @@ window.addEventListener('DOMContentLoaded', () => {
       transparent: true,
     });
 
-    const cube = new THREE.Mesh(cubeGeometry, meshMaterial);
+    const cube = new THREE.Points(geometry, meshMaterial);
 
     scene.add(cube);
 

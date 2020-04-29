@@ -50687,22 +50687,29 @@ window.addEventListener('DOMContentLoaded', function () {
         init(vertexShader, fragmentShader);
     });
     function init(vertexShader, fragmentShader) {
-        var cubeGeometry = new three__WEBPACK_IMPORTED_MODULE_0__["PlaneGeometry"](100, 100);
+        var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]();
+        var verticesBase = [];
+        for (var i = 0; i < 5000; i++) {
+            var x = Math.floor(Math.random() * 1000 - 500);
+            var y = Math.floor(Math.random() * 1000 - 500);
+            var z = Math.floor(Math.random() * 1000 - 500);
+            verticesBase.push(x, y, z);
+        }
+        var vertices = new Float32Array(verticesBase);
+        geometry.addAttribute('position', new three__WEBPACK_IMPORTED_MODULE_0__["BufferAttribute"](vertices, 3));
         var uniforms = {
-            time: { type: 'f', value: 0.2 },
-            scale: { type: 'f', value: 0.2 },
-            alpha: { type: 'f', value: 0.6 },
-            resolution: { type: 'v2', value: new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"]() },
+            size: {
+                type: 'f',
+                value: 10.0,
+            },
         };
-        uniforms.resolution.value.x = window.innerWidth;
-        uniforms.resolution.value.y = window.innerHeight;
         var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({
             uniforms: uniforms,
             vertexShader: vertexShader,
             fragmentShader: fragmentShader,
             transparent: true,
         });
-        var cube = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](cubeGeometry, meshMaterial);
+        var cube = new three__WEBPACK_IMPORTED_MODULE_0__["Points"](geometry, meshMaterial);
         scene.add(cube);
         renderer.render(scene, camera);
     }
