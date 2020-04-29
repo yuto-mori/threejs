@@ -1,12 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-// npm の入れ方などはここを公式を参考
-// https://threejs.org/docs/#manual/en/introduction/How-to-use-post-processing
 import * as THREE from 'three';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from './libs/postprocessing/RenderPass.js';
-import { CopyShader } from './libs/shaders/CopyShader.js';
-import { ShaderPass } from './libs/postprocessing/ShaderPass.js';
-import { CustomGrayScaleShader } from './shader/shader.js';
 
 window.addEventListener('DOMContentLoaded', () => {
   // レンダラーを作成
@@ -20,63 +13,69 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // カメラを作成
   const camera = new THREE.PerspectiveCamera(45, 600 / 600, 1, 2000);
-  camera.position.set(0, 0, 10);
+  camera.position.set(0, 0, 120);
 
   // canvasをbodyに追加
   document.getElementById('js-webgl-output').appendChild(renderer.domElement);
 
-  const renderPass = new RenderPass(scene, camera);
-  const effectCopy = new ShaderPass(CopyShader);
-  effectCopy.renderToScreen = true;
-  const shaderPass = new ShaderPass(CustomGrayScaleShader);
-  shaderPass.enabled = false;
-
-  const composer = new EffectComposer(renderer);
-  composer.addPass(renderPass);
-  composer.addPass(effectCopy);
-  composer.addPass(shaderPass);
-
-  const grayScale = true;
-  const rPower = 0.2126;
-  const gPower = 0.7152;
-  const bPower = 0.0722;
-  shaderPass.enabled = grayScale;
-  shaderPass.uniforms.rPower.value = rPower;
-  shaderPass.uniforms.gPower.value = gPower;
-  shaderPass.uniforms.bPower.value = bPower;
-
-  // 平行光源を生成
-  const light = new THREE.DirectionalLight(0xffffff);
-  light.position.set(1, 1, 1);
-  scene.add(light);
-
-  //画像を読み込む
-  const textureLoader = new THREE.TextureLoader();
-  const texture = textureLoader.load(
-    '/threejs/assets/img/carousel01/01.jpg',
-    onRender
+  loadShaderSource(
+    '/threejs/assets/shader/scene.vert',
+    '/threejs/assets/shader/scene.frag',
+    (shader) => {
+      const vertexShader = shader.vs;
+      const fragmentShader = shader.fs;
+      init(vertexShader, fragmentShader);
+    }
   );
 
-  function onRender(): void {
-    const createParticles = (): void => {
-      const geom = new THREE.Geometry();
-      const material = new THREE.PointsMaterial({
-        size: 20,
-        color: 0xffffff,
-        map: texture,
-      });
+  function init(vertexShader, fragmentShader): void {
+    const cubeGeometry = new THREE.PlaneGeometry(100, 100);
 
-      for (let x = -4; x < 4; x++) {
-        for (let y = -2; y < 2; y++) {
-          const particle = new THREE.Vector3(x * 10, y * 10, 0);
-          geom.vertices.push(particle);
-        }
-      }
-      const cloud = new THREE.Points(geom, material);
-      scene.add(cloud);
+    const uniforms = {
+      time: { type: 'f', value: 0.2 },
+      scale: { type: 'f', value: 0.2 },
+      alpha: { type: 'f', value: 0.6 },
+      resolution: { type: 'v2', value: new THREE.Vector2() },
     };
-    createParticles();
-    //renderer.render(scene, camera);
-    composer.render();
+
+    uniforms.resolution.value.x = window.innerWidth;
+    uniforms.resolution.value.y = window.innerHeight;
+
+    const meshMaterial = new THREE.ShaderMaterial({
+      uniforms: uniforms,
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader,
+      transparent: true,
+    });
+
+    const cube = new THREE.Mesh(cubeGeometry, meshMaterial);
+
+    scene.add(cube);
+
+    renderer.render(scene, camera);
+  }
+
+  function loadShaderSource(vsPath, fsPath, callback): void {
+    let vs, fs;
+    xhr(vsPath, true);
+    xhr(fsPath, false);
+    function xhr(source, isVertex): void {
+      const xml = new XMLHttpRequest();
+      xml.open('GET', source, true);
+      xml.setRequestHeader('Pragma', 'no-cache');
+      xml.setRequestHeader('Cache-Control', 'no-cache');
+      xml.onload = (): void => {
+        if (isVertex) {
+          vs = xml.responseText;
+        } else {
+          fs = xml.responseText;
+        }
+        if (vs != null && fs != null) {
+          console.log('loaded', vsPath, fsPath);
+          callback({ vs: vs, fs: fs });
+        }
+      };
+      xml.send();
+    }
   }
 });
