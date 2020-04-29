@@ -50676,42 +50676,63 @@ window.addEventListener('DOMContentLoaded', function () {
     renderer.setSize(600, 600);
     // シーンを作成
     var scene = new three__WEBPACK_IMPORTED_MODULE_0__["Scene"]();
-    // カメラを作成
-    var camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](45, 600 / 600, 1, 2000);
-    camera.position.set(0, 0, 120);
+    /**
+     * カメラを作成
+     * @param {number} fov - 視野角 推奨 50
+     * @param {number} aspect - アスペクト比 推奨 window.innerWidth/window.innerHeight
+     * @param {number} near - カメラのどのくらい近くからThree.jsが描画を開始するか 推奨 0.1
+     * @param {number} far - カメラからどのくらい遠くまで見えるか 推奨 2000
+     */
+    var camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](45, 600 / 600, 0.1, 2000);
+    //カメラの位置
+    camera.position.set(0, 0, 2000);
     // canvasをbodyに追加
     document.getElementById('js-webgl-output').appendChild(renderer.domElement);
+    /**
+     * シェーダーの読み込み
+     * @param {string} vsPath - 頂点シェーダファイル
+     * @param {string} fsPath - フラグメントシェーダ
+     * @param {function} callback
+     */
     loadShaderSource('/threejs/assets/shader/scene.vert', '/threejs/assets/shader/scene.frag', function (shader) {
         var vertexShader = shader.vs;
         var fragmentShader = shader.fs;
         init(vertexShader, fragmentShader);
     });
+    // geometry
     function init(vertexShader, fragmentShader) {
+        // geometry ポイントスプライト
         var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]();
         var verticesBase = [];
-        for (var i = 0; i < 5000; i++) {
-            var x = Math.floor(Math.random() * 1000 - 500);
-            var y = Math.floor(Math.random() * 1000 - 500);
-            var z = Math.floor(Math.random() * 1000 - 500);
+        for (var i = 0; i < 600; i++) {
+            var x = i + 10;
+            var y = 0;
+            var z = 0;
             verticesBase.push(x, y, z);
         }
         var vertices = new Float32Array(verticesBase);
         geometry.addAttribute('position', new three__WEBPACK_IMPORTED_MODULE_0__["BufferAttribute"](vertices, 3));
-        var uniforms = {
-            size: {
-                type: 'f',
-                value: 10.0,
-            },
-        };
-        var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({
-            uniforms: uniforms,
-            vertexShader: vertexShader,
-            fragmentShader: fragmentShader,
-            transparent: true,
-        });
-        var cube = new three__WEBPACK_IMPORTED_MODULE_0__["Points"](geometry, meshMaterial);
-        scene.add(cube);
-        renderer.render(scene, camera);
+        // Material
+        var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
+        var texture = loader.load('/threejs/assets/img/carousel01/03.jpg', onRender);
+        function onRender() {
+            var uniforms = {
+                size: {
+                    type: 'f',
+                    value: 10.0,
+                },
+                uTex: { value: texture },
+            };
+            var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({
+                uniforms: uniforms,
+                vertexShader: vertexShader,
+                fragmentShader: fragmentShader,
+                transparent: true,
+            });
+            var cube = new three__WEBPACK_IMPORTED_MODULE_0__["Points"](geometry, meshMaterial);
+            scene.add(cube);
+            renderer.render(scene, camera);
+        }
     }
     function loadShaderSource(vsPath, fsPath, callback) {
         var vs, fs;

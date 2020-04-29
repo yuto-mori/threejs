@@ -10,14 +10,27 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // シーンを作成
   const scene = new THREE.Scene();
+  /**
+   * カメラを作成
+   * @param {number} fov - 視野角 推奨 50
+   * @param {number} aspect - アスペクト比 推奨 window.innerWidth/window.innerHeight
+   * @param {number} near - カメラのどのくらい近くからThree.jsが描画を開始するか 推奨 0.1
+   * @param {number} far - カメラからどのくらい遠くまで見えるか 推奨 2000
+   */
+  const camera = new THREE.PerspectiveCamera(45, 600 / 600, 0.1, 2000);
 
-  // カメラを作成
-  const camera = new THREE.PerspectiveCamera(45, 600 / 600, 1, 2000);
-  camera.position.set(0, 0, 120);
+  //カメラの位置
+  camera.position.set(0, 0, 2000);
 
   // canvasをbodyに追加
   document.getElementById('js-webgl-output').appendChild(renderer.domElement);
 
+  /**
+   * シェーダーの読み込み
+   * @param {string} vsPath - 頂点シェーダファイル
+   * @param {string} fsPath - フラグメントシェーダ
+   * @param {function} callback
+   */
   loadShaderSource(
     '/threejs/assets/shader/scene.vert',
     '/threejs/assets/shader/scene.frag',
@@ -28,22 +41,34 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   );
 
+  // geometry
   function init(vertexShader, fragmentShader): void {
+    // geometry ポイントスプライト
     const geometry = new THREE.BufferGeometry();
     const verticesBase = [];
-    for (let i = 0; i < 5000; i++) {
-      const x = Math.floor(Math.random() * 1000 - 500);
-      const y = Math.floor(Math.random() * 1000 - 500);
-      const z = Math.floor(Math.random() * 1000 - 500);
+    for (let i = 0; i < 600; i++) {
+      const x = i + 10;
+      const y = 0;
+      const z = 0;
       verticesBase.push(x, y, z);
     }
     const vertices = new Float32Array(verticesBase);
     geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
+
+    // Material
+    const loader = new THREE.TextureLoader();
+    const texture = loader.load(
+      '/threejs/assets/img/carousel01/03.jpg',
+      onRender
+      );
+
+    function onRender() {
     const uniforms = {
       size: {
         type: 'f',
         value: 10.0,
       },
+      uTex: { value: texture },
     };
 
     const meshMaterial = new THREE.ShaderMaterial({
@@ -58,6 +83,7 @@ window.addEventListener('DOMContentLoaded', () => {
     scene.add(cube);
 
     renderer.render(scene, camera);
+    }
   }
 
   function loadShaderSource(vsPath, fsPath, callback): void {
