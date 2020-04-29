@@ -46,43 +46,43 @@ window.addEventListener('DOMContentLoaded', () => {
     // geometry ポイントスプライト
     const geometry = new THREE.BufferGeometry();
     const verticesBase = [];
-    for (let i = 0; i < 600; i++) {
-      const x = i + 10;
-      const y = 0;
-      const z = 0;
-      verticesBase.push(x, y, z);
-    }
+        const x = 0;
+        const y = 0;
+        const z = 0;
+        verticesBase.push(x, y, z);
+
     const vertices = new Float32Array(verticesBase);
     geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
+    console.log(new THREE.BufferAttribute(vertices, 3));
 
     // Material
     const loader = new THREE.TextureLoader();
     const texture = loader.load(
       '/threejs/assets/img/carousel01/03.jpg',
       onRender
-      );
+    );
 
-    function onRender() {
-    const uniforms = {
-      size: {
-        type: 'f',
-        value: 10.0,
-      },
-      uTex: { value: texture },
-    };
+    function onRender(): void {
+      const uniforms = {
+        size: {
+          type: 'f',
+          value: 10,
+        },
+        uTex: { value: texture },
+      };
 
-    const meshMaterial = new THREE.ShaderMaterial({
-      uniforms: uniforms,
-      vertexShader: vertexShader,
-      fragmentShader: fragmentShader,
-      transparent: true,
-    });
+      const meshMaterial = new THREE.ShaderMaterial({
+        uniforms: uniforms,
+        vertexShader: vertexShader,
+        fragmentShader: fragmentShader,
+        transparent: true,
+      });
 
-    const cube = new THREE.Points(geometry, meshMaterial);
+      const cube = new THREE.Points(geometry, meshMaterial);
 
-    scene.add(cube);
+      scene.add(cube);
 
-    renderer.render(scene, camera);
+      renderer.render(scene, camera);
     }
   }
 

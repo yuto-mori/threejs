@@ -50704,14 +50704,13 @@ window.addEventListener('DOMContentLoaded', function () {
         // geometry ポイントスプライト
         var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]();
         var verticesBase = [];
-        for (var i = 0; i < 600; i++) {
-            var x = i + 10;
-            var y = 0;
-            var z = 0;
-            verticesBase.push(x, y, z);
-        }
+        var x = 0;
+        var y = 0;
+        var z = 0;
+        verticesBase.push(x, y, z);
         var vertices = new Float32Array(verticesBase);
         geometry.addAttribute('position', new three__WEBPACK_IMPORTED_MODULE_0__["BufferAttribute"](vertices, 3));
+        console.log(new three__WEBPACK_IMPORTED_MODULE_0__["BufferAttribute"](vertices, 3));
         // Material
         var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
         var texture = loader.load('/threejs/assets/img/carousel01/03.jpg', onRender);
@@ -50719,7 +50718,7 @@ window.addEventListener('DOMContentLoaded', function () {
             var uniforms = {
                 size: {
                     type: 'f',
-                    value: 10.0,
+                    value: 10,
                 },
                 uTex: { value: texture },
             };
