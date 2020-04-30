@@ -20,7 +20,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const camera = new THREE.PerspectiveCamera(45, 600 / 600, 0.1, 2000);
 
   //カメラの位置
-  camera.position.set(0, 0, 800);
+  camera.position.set(0, 0, 1000);
   camera.lookAt(new THREE.Vector3());
 
   // canvasをbodyに追加
@@ -49,9 +49,10 @@ window.addEventListener('DOMContentLoaded', () => {
     const verticesBase = [];
     let width = 600;              
     let half = width / 2.0;       
-    let interval = 20;           
+    let interval = 12;           
     let count = width / interval;
     const colorsBase = [];
+    const uv = [];
     for(let i = 0; i <= count; ++i){
       // 横位置
       let x = -half + i * interval;
@@ -59,12 +60,15 @@ window.addEventListener('DOMContentLoaded', () => {
           // 縦位置
           let y = -half + j * interval;
           verticesBase.push(x, y, 0.0);
-          colorsBase.push(90,90,90,1);
+          uv.push(i / count,  j / count);
+          colorsBase.push(255.0,255.0,255.0,1);
       }
   }
   //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
     const vertices = new THREE.Float32BufferAttribute(verticesBase, 3);
     geometry.addAttribute('position', vertices);
+    const uvs = new THREE.Float32BufferAttribute(uv, 2);
+    geometry.addAttribute('uv', uvs);
     const colors = new THREE.Uint8BufferAttribute(colorsBase, 4);
     colors.normalized = true;
     geometry.addAttribute( 'color', colors );
@@ -72,7 +76,7 @@ window.addEventListener('DOMContentLoaded', () => {
     // Material
     const loader = new THREE.TextureLoader();
     const texture = loader.load(
-      '/threejs/assets/img/carousel01/03.jpg',
+      '/threejs/assets/img/carousel01/01.jpg',
       onRender
     );
 
@@ -80,8 +84,9 @@ window.addEventListener('DOMContentLoaded', () => {
       const uniforms = {
         size: {
           type: 'f',
-          value: 10,
-        }
+          value: 5,
+        },
+        uTex: { value: texture },
       };
 
       const meshMaterial = new THREE.ShaderMaterial({

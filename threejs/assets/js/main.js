@@ -50685,7 +50685,7 @@ window.addEventListener('DOMContentLoaded', function () {
      */
     var camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](45, 600 / 600, 0.1, 2000);
     //カメラの位置
-    camera.position.set(0, 0, 800);
+    camera.position.set(0, 0, 1000);
     camera.lookAt(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]());
     // canvasをbodyに追加
     document.getElementById('js-webgl-output').appendChild(renderer.domElement);
@@ -50707,9 +50707,10 @@ window.addEventListener('DOMContentLoaded', function () {
         var verticesBase = [];
         var width = 600;
         var half = width / 2.0;
-        var interval = 20;
+        var interval = 12;
         var count = width / interval;
         var colorsBase = [];
+        var uv = [];
         for (var i = 0; i <= count; ++i) {
             // 横位置
             var x = -half + i * interval;
@@ -50717,24 +50718,28 @@ window.addEventListener('DOMContentLoaded', function () {
                 // 縦位置
                 var y = -half + j * interval;
                 verticesBase.push(x, y, 0.0);
-                colorsBase.push(90, 90, 90, 1);
+                uv.push(i / count, j / count);
+                colorsBase.push(255.0, 255.0, 255.0, 1);
             }
         }
         //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
         var vertices = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](verticesBase, 3);
         geometry.addAttribute('position', vertices);
+        var uvs = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](uv, 2);
+        geometry.addAttribute('uv', uvs);
         var colors = new three__WEBPACK_IMPORTED_MODULE_0__["Uint8BufferAttribute"](colorsBase, 4);
         colors.normalized = true;
         geometry.addAttribute('color', colors);
         // Material
         var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
-        var texture = loader.load('/threejs/assets/img/carousel01/03.jpg', onRender);
+        var texture = loader.load('/threejs/assets/img/carousel01/01.jpg', onRender);
         function onRender() {
             var uniforms = {
                 size: {
                     type: 'f',
-                    value: 10,
-                }
+                    value: 5,
+                },
+                uTex: { value: texture },
             };
             var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({
                 uniforms: uniforms,
