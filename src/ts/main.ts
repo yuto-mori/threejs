@@ -17,10 +17,11 @@ window.addEventListener('DOMContentLoaded', () => {
    * @param {number} near - カメラのどのくらい近くからThree.jsが描画を開始するか 推奨 0.1
    * @param {number} far - カメラからどのくらい遠くまで見えるか 推奨 2000
    */
-  const camera = new THREE.PerspectiveCamera(45, 600 / 600, 0.1, 2000);
+  const camera = new THREE.PerspectiveCamera(50, 600 / 600, 0.1, 2000);
 
   //カメラの位置
-  camera.position.set(0, 0, 800);
+  camera.position.set(0, 0, 256/Math.tan(25 * Math.PI/180));
+  //全体をうつす時のカメラ位置 (height or width)/2/Math.tan(fov/2 * Math.PI/180)
   camera.lookAt(new THREE.Vector3());
 
   // canvasをbodyに追加
@@ -57,7 +58,7 @@ window.addEventListener('DOMContentLoaded', () => {
     let height = 256;             
     let halfX = width / 2.0;
     let halfY = height /2.0       
-    let interval = 100;           
+    let interval = 0.6;           
     let countX = width / interval;
     let countY = height / interval;
     for(let i = 0; i <= countX; ++i){
@@ -68,7 +69,7 @@ window.addEventListener('DOMContentLoaded', () => {
           let y = -halfY + j * interval;
           verticesBase.push(x, y, 0.0);
           uv.push(i / countX,  j / countY );
-          size.push(20.0);
+          size.push(1.0);
           colorsBase.push(255.0,255.0,255.0,1);
       }
   }
