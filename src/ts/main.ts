@@ -50,15 +50,16 @@ window.addEventListener('DOMContentLoaded', () => {
     // position, faceIndex, normal, color, uv, uv2
     const geometry = new THREE.BufferGeometry();
     const verticesBase = [];
+    const colorsBase = [];
+    const uv = [];// 画像の頂点の色を取得する
+    const size = [];
     let width = 512;
     let height = 256;             
     let halfX = width / 2.0;
     let halfY = height /2.0       
-    let interval = 12;           
+    let interval = 100;           
     let countX = width / interval;
     let countY = height / interval;
-    const colorsBase = [];
-    const uv = [];
     for(let i = 0; i <= countX; ++i){
       // 横位置
       let x = -halfX + i * interval;
@@ -67,6 +68,7 @@ window.addEventListener('DOMContentLoaded', () => {
           let y = -halfY + j * interval;
           verticesBase.push(x, y, 0.0);
           uv.push(i / countX,  j / countY );
+          size.push(20.0);
           colorsBase.push(255.0,255.0,255.0,1);
       }
   }
@@ -75,6 +77,8 @@ window.addEventListener('DOMContentLoaded', () => {
     geometry.addAttribute('position', vertices);
     const uvs = new THREE.Float32BufferAttribute(uv, 2);
     geometry.addAttribute('uv', uvs);
+    const sizes = new THREE.Float32BufferAttribute(size, 1);
+    geometry.addAttribute('size', sizes);
     const colors = new THREE.Uint8BufferAttribute(colorsBase, 4);
     colors.normalized = true;
     geometry.addAttribute( 'color', colors );
@@ -88,10 +92,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     function onRender(): void {
       const uniforms = {
-        size: {
-          type: 'f',
-          value: 5,
-        },
         uTex: { value: texture },
       };
 

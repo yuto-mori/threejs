@@ -50708,15 +50708,16 @@ window.addEventListener('DOMContentLoaded', function () {
         // position, faceIndex, normal, color, uv, uv2
         var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]();
         var verticesBase = [];
+        var colorsBase = [];
+        var uv = []; // 画像の頂点の色を取得する
+        var size = [];
         var width = 512;
         var height = 256;
         var halfX = width / 2.0;
         var halfY = height / 2.0;
-        var interval = 12;
+        var interval = 100;
         var countX = width / interval;
         var countY = height / interval;
-        var colorsBase = [];
-        var uv = [];
         for (var i = 0; i <= countX; ++i) {
             // 横位置
             var x = -halfX + i * interval;
@@ -50725,6 +50726,7 @@ window.addEventListener('DOMContentLoaded', function () {
                 var y = -halfY + j * interval;
                 verticesBase.push(x, y, 0.0);
                 uv.push(i / countX, j / countY);
+                size.push(20.0);
                 colorsBase.push(255.0, 255.0, 255.0, 1);
             }
         }
@@ -50733,6 +50735,8 @@ window.addEventListener('DOMContentLoaded', function () {
         geometry.addAttribute('position', vertices);
         var uvs = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](uv, 2);
         geometry.addAttribute('uv', uvs);
+        var sizes = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](size, 1);
+        geometry.addAttribute('size', sizes);
         var colors = new three__WEBPACK_IMPORTED_MODULE_0__["Uint8BufferAttribute"](colorsBase, 4);
         colors.normalized = true;
         geometry.addAttribute('color', colors);
@@ -50741,10 +50745,6 @@ window.addEventListener('DOMContentLoaded', function () {
         var texture = loader.load('/threejs/assets/img/carousel01/01.jpg', onRender);
         function onRender() {
             var uniforms = {
-                size: {
-                    type: 'f',
-                    value: 5,
-                },
                 uTex: { value: texture },
             };
             var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({

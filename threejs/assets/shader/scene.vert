@@ -1,7 +1,7 @@
 //Built-in uniforms and attributes
 //https://threejs.org/docs/#api/en/renderers/webgl/WebGLProgram
 
-uniform float size;
+attribute float size;
 attribute vec4 color;
 varying vec4 vColor;
 varying vec2 vUv;
