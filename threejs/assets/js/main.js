@@ -50685,7 +50685,8 @@ window.addEventListener('DOMContentLoaded', function () {
      */
     var camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](45, 600 / 600, 0.1, 2000);
     //カメラの位置
-    camera.position.set(0, 0, 2000);
+    camera.position.set(0, 0, 800);
+    camera.lookAt(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]());
     // canvasをbodyに追加
     document.getElementById('js-webgl-output').appendChild(renderer.domElement);
     /**
@@ -50704,13 +50705,27 @@ window.addEventListener('DOMContentLoaded', function () {
         // geometry ポイントスプライト
         var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]();
         var verticesBase = [];
-        var x = 0;
-        var y = 0;
-        var z = 0;
-        verticesBase.push(x, y, z);
-        var vertices = new Float32Array(verticesBase);
-        geometry.addAttribute('position', new three__WEBPACK_IMPORTED_MODULE_0__["BufferAttribute"](vertices, 3));
-        console.log(new three__WEBPACK_IMPORTED_MODULE_0__["BufferAttribute"](vertices, 3));
+        var width = 600;
+        var half = width / 2.0;
+        var interval = 20;
+        var count = width / interval;
+        var colorsBase = [];
+        for (var i = 0; i <= count; ++i) {
+            // 横位置
+            var x = -half + i * interval;
+            for (var j = 0; j <= count; ++j) {
+                // 縦位置
+                var y = -half + j * interval;
+                verticesBase.push(x, y, 0.0);
+                colorsBase.push(90, 90, 90, 1);
+            }
+        }
+        //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
+        var vertices = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](verticesBase, 3);
+        geometry.addAttribute('position', vertices);
+        var colors = new three__WEBPACK_IMPORTED_MODULE_0__["Uint8BufferAttribute"](colorsBase, 4);
+        colors.normalized = true;
+        geometry.addAttribute('color', colors);
         // Material
         var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
         var texture = loader.load('/threejs/assets/img/carousel01/03.jpg', onRender);
@@ -50719,14 +50734,12 @@ window.addEventListener('DOMContentLoaded', function () {
                 size: {
                     type: 'f',
                     value: 10,
-                },
-                uTex: { value: texture },
+                }
             };
             var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({
                 uniforms: uniforms,
                 vertexShader: vertexShader,
                 fragmentShader: fragmentShader,
-                transparent: true,
             });
             var cube = new three__WEBPACK_IMPORTED_MODULE_0__["Points"](geometry, meshMaterial);
             scene.add(cube);

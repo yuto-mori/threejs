@@ -20,7 +20,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const camera = new THREE.PerspectiveCamera(45, 600 / 600, 0.1, 2000);
 
   //カメラの位置
-  camera.position.set(0, 0, 2000);
+  camera.position.set(0, 0, 800);
+  camera.lookAt(new THREE.Vector3());
 
   // canvasをbodyに追加
   document.getElementById('js-webgl-output').appendChild(renderer.domElement);
@@ -46,14 +47,27 @@ window.addEventListener('DOMContentLoaded', () => {
     // geometry ポイントスプライト
     const geometry = new THREE.BufferGeometry();
     const verticesBase = [];
-        const x = 0;
-        const y = 0;
-        const z = 0;
-        verticesBase.push(x, y, z);
-
-    const vertices = new Float32Array(verticesBase);
-    geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
-    console.log(new THREE.BufferAttribute(vertices, 3));
+    let width = 600;              
+    let half = width / 2.0;       
+    let interval = 20;           
+    let count = width / interval;
+    const colorsBase = [];
+    for(let i = 0; i <= count; ++i){
+      // 横位置
+      let x = -half + i * interval;
+      for(let j = 0; j <= count; ++j){
+          // 縦位置
+          let y = -half + j * interval;
+          verticesBase.push(x, y, 0.0);
+          colorsBase.push(90,90,90,1);
+      }
+  }
+  //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
+    const vertices = new THREE.Float32BufferAttribute(verticesBase, 3);
+    geometry.addAttribute('position', vertices);
+    const colors = new THREE.Uint8BufferAttribute(colorsBase, 4);
+    colors.normalized = true;
+    geometry.addAttribute( 'color', colors );
 
     // Material
     const loader = new THREE.TextureLoader();
@@ -67,15 +81,13 @@ window.addEventListener('DOMContentLoaded', () => {
         size: {
           type: 'f',
           value: 10,
-        },
-        uTex: { value: texture },
+        }
       };
 
       const meshMaterial = new THREE.ShaderMaterial({
         uniforms: uniforms,
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
-        transparent: true,
       });
 
       const cube = new THREE.Points(geometry, meshMaterial);

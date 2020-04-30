@@ -2,13 +2,13 @@
 //https://threejs.org/docs/#api/en/renderers/webgl/WebGLProgram
 
 uniform float size;
-varying vec2 vUv;
-
+attribute vec4 color;
+varying vec4 vColor;
 
    void main() {
-      vUv = uv;
-      vec4 mvPosition = vec4(position, 1.0);
+      vColor = color;
+      vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
       
       gl_PointSize = size;
-      gl_Position =  mvPosition;
+      gl_Position = projectionMatrix * mvPosition;
    }
