@@ -47,7 +47,8 @@ window.addEventListener('DOMContentLoaded', () => {
   function init(vertexShader, fragmentShader): void {
     // geometry ポイントスプライト
     // https://threejs.org/docs/#api/en/core/BufferGeometry
-    // シェーダに送れる値
+    // https://qiita.com/kitasenjudesign/items/1657d9556591284a43c8
+    // シェーダに送れるデフォルトの値
     // position, faceIndex, normal, color, uv, uv2
     const geometry = new THREE.BufferGeometry();
     const verticesBase = [];
@@ -93,7 +94,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
     function onRender(): void {
       const uniforms = {
-        uTex: { value: texture },
+        uTex: {
+          type:'t',
+          value: texture
+        },
+        time: {
+          type:'f',
+          value:0.2,
+        }
       };
 
       const meshMaterial = new THREE.ShaderMaterial({
@@ -102,11 +110,23 @@ window.addEventListener('DOMContentLoaded', () => {
         fragmentShader: fragmentShader,
       });
 
-      const cube = new THREE.Points(geometry, meshMaterial);
+      const cloud = new THREE.Points(geometry, meshMaterial);
+      scene.add(cloud);
 
-      scene.add(cube);
+      let step = 0;
+      render();
 
-      renderer.render(scene, camera);
+      function render(){
+
+        cloud.rotation.y = step += 0.01;
+        cloud.rotation.x = step;
+        cloud.rotation.z = step;
+
+        meshMaterial.uniforms.time.value += 0.01;
+  
+        requestAnimationFrame(render);
+        renderer.render(scene, camera);
+      }
     }
   }
 

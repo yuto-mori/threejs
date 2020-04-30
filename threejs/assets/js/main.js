@@ -50705,7 +50705,8 @@ window.addEventListener('DOMContentLoaded', function () {
     function init(vertexShader, fragmentShader) {
         // geometry ポイントスプライト
         // https://threejs.org/docs/#api/en/core/BufferGeometry
-        // シェーダに送れる値
+        // https://qiita.com/kitasenjudesign/items/1657d9556591284a43c8
+        // シェーダに送れるデフォルトの値
         // position, faceIndex, normal, color, uv, uv2
         var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]();
         var verticesBase = [];
@@ -50746,16 +50747,32 @@ window.addEventListener('DOMContentLoaded', function () {
         var texture = loader.load('/threejs/assets/img/carousel01/01.jpg', onRender);
         function onRender() {
             var uniforms = {
-                uTex: { value: texture },
+                uTex: {
+                    type: 't',
+                    value: texture
+                },
+                time: {
+                    type: 'f',
+                    value: 0.2,
+                }
             };
             var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({
                 uniforms: uniforms,
                 vertexShader: vertexShader,
                 fragmentShader: fragmentShader,
             });
-            var cube = new three__WEBPACK_IMPORTED_MODULE_0__["Points"](geometry, meshMaterial);
-            scene.add(cube);
-            renderer.render(scene, camera);
+            var cloud = new three__WEBPACK_IMPORTED_MODULE_0__["Points"](geometry, meshMaterial);
+            scene.add(cloud);
+            var step = 0;
+            render();
+            function render() {
+                cloud.rotation.y = step += 0.01;
+                cloud.rotation.x = step;
+                cloud.rotation.z = step;
+                meshMaterial.uniforms.time.value += 0.01;
+                requestAnimationFrame(render);
+                renderer.render(scene, camera);
+            }
         }
     }
     function loadShaderSource(vsPath, fsPath, callback) {
