@@ -20,7 +20,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const camera = new THREE.PerspectiveCamera(45, 600 / 600, 0.1, 2000);
 
   //カメラの位置
-  camera.position.set(0, 0, 1000);
+  camera.position.set(0, 0, 800);
   camera.lookAt(new THREE.Vector3());
 
   // canvasをbodyに追加
@@ -45,22 +45,28 @@ window.addEventListener('DOMContentLoaded', () => {
   // geometry
   function init(vertexShader, fragmentShader): void {
     // geometry ポイントスプライト
+    // https://threejs.org/docs/#api/en/core/BufferGeometry
+    // シェーダに送れる値
+    // position, faceIndex, normal, color, uv, uv2
     const geometry = new THREE.BufferGeometry();
     const verticesBase = [];
-    let width = 600;              
-    let half = width / 2.0;       
+    let width = 512;
+    let height = 256;             
+    let halfX = width / 2.0;
+    let halfY = height /2.0       
     let interval = 12;           
-    let count = width / interval;
+    let countX = width / interval;
+    let countY = height / interval;
     const colorsBase = [];
     const uv = [];
-    for(let i = 0; i <= count; ++i){
+    for(let i = 0; i <= countX; ++i){
       // 横位置
-      let x = -half + i * interval;
-      for(let j = 0; j <= count; ++j){
+      let x = -halfX + i * interval;
+      for(let j = 0; j <= countY ; ++j){
           // 縦位置
-          let y = -half + j * interval;
+          let y = -halfY + j * interval;
           verticesBase.push(x, y, 0.0);
-          uv.push(i / count,  j / count);
+          uv.push(i / countX,  j / countY );
           colorsBase.push(255.0,255.0,255.0,1);
       }
   }
