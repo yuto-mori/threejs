@@ -53,28 +53,28 @@ window.addEventListener('DOMContentLoaded', () => {
     const geometry = new THREE.BufferGeometry();
     const verticesBase = [];
     const colorsBase = [];
-    const uv = [];// 画像の頂点の色を取得する
+    const uv = []; // 画像の頂点の色を取得する
     const size = [];
-    let width = 512;
-    let height = 256;             
-    let halfX = width / 2.0;
-    let halfY = height /2.0       
-    let interval = 0.6;           
-    let countX = width / interval;
-    let countY = height / interval;
-    for(let i = 0; i <= countX; ++i){
+    const width = 512;
+    const height = 256;
+    const halfX = width / 2.0;
+    const halfY = height / 2.0;
+    const interval = 0.6;
+    const countX = width / interval;
+    const countY = height / interval;
+    for (let i = 0; i <= countX; ++i) {
       // 横位置
-      let x = -halfX + i * interval;
-      for(let j = 0; j <= countY ; ++j){
-          // 縦位置
-          let y = -halfY + j * interval;
-          verticesBase.push(x, y, 2.0);
-          uv.push(i / countX,  j / countY );
-          size.push(1.0);
-          colorsBase.push(255.0,255.0,255.0,1);
+      const x = -halfX + i * interval;
+      for (let j = 0; j <= countY; ++j) {
+        // 縦位置
+        const y = -halfY + j * interval;
+        verticesBase.push(x, y, 2.0);
+        uv.push(i / countX, j / countY);
+        size.push(1.0);
+        colorsBase.push(255.0, 255.0, 255.0, 1);
       }
-  }
-  //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
+    }
+    //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
     const vertices = new THREE.Float32BufferAttribute(verticesBase, 3);
     geometry.addAttribute('position', vertices);
     const uvs = new THREE.Float32BufferAttribute(uv, 2);
@@ -83,7 +83,7 @@ window.addEventListener('DOMContentLoaded', () => {
     geometry.addAttribute('size', sizes);
     const colors = new THREE.Uint8BufferAttribute(colorsBase, 4);
     colors.normalized = true;
-    geometry.addAttribute( 'color', colors );
+    geometry.addAttribute('color', colors);
 
     // Material
     const loader = new THREE.TextureLoader();
@@ -92,16 +92,18 @@ window.addEventListener('DOMContentLoaded', () => {
       onRender
     );
 
+    //type参考
+    //https://qiita.com/kitasenjudesign/items/1657d9556591284a43c8
     function onRender(): void {
       const uniforms = {
         uTex: {
-          type:'t',
-          value: texture
+          type: 't',
+          value: texture,
         },
         time: {
-          type:'f',
-          value:0.2,
-        }
+          type: 'f',
+          value: 0.2,
+        },
       };
 
       const meshMaterial = new THREE.ShaderMaterial({
@@ -113,20 +115,20 @@ window.addEventListener('DOMContentLoaded', () => {
       const cloud = new THREE.Points(geometry, meshMaterial);
       scene.add(cloud);
 
-      let step = 0;
+      //let step = 0;
       render();
 
       const startTime = Date.now();
       let nowTime = 0;
 
-      function render(){
-         nowTime = (Date.now() - startTime) / 1000;
+      function render() {
+        nowTime = (Date.now() - startTime) / 1000;
         // cloud.rotation.x += 0.01;
         // cloud.rotation.y += 0.01;
         // cloud.rotation.z = step;
 
         meshMaterial.uniforms.time.value = nowTime;
-  
+
         requestAnimationFrame(render);
         renderer.render(scene, camera);
       }

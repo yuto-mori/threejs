@@ -20,7 +20,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const camera = new THREE.PerspectiveCamera(50, 600 / 600, 0.1, 2000);
 
   //カメラの位置
-  camera.position.set(0, 0, 600/2/Math.tan(25 * Math.PI/180));
+  camera.position.set(0, 0, 600 / 2 / Math.tan((25 * Math.PI) / 180));
   //全体をうつす時のカメラ位置 (height or width)/2/Math.tan(fov/2 * Math.PI/180)
   camera.lookAt(new THREE.Vector3());
 
@@ -51,45 +51,40 @@ window.addEventListener('DOMContentLoaded', () => {
     // シェーダに送れるデフォルトの値
     // position, faceIndex, normal, color, uv, uv2
     const geometry = new THREE.BufferGeometry();
-    const verticesBase = [
-      0.0,  0.0,  0.0, // 1 つ目の頂点の X, Y, Z
-             1.0,  1.0,  0.0, // 2 つ目の頂点の X, Y, Z
-            -1.0,  1.0,  0.0, // 3 つ目の頂点の X, Y, Z
-             1.0, -1.0,  0.0, // 4 つ目の頂点の X, Y, Z
-            -1.0, -1.0,  0.0  // 5 つ目の頂点の X, Y, Z
-    ];
-    const colorsBase = [
-      255.0,255.0,255.0,1,
-      0.0,255.0,255.0,1,
-      255.0,0.0,255.0,1,
-      255.0,255.0,0.0,1,
-      255.0,255.0,255.0,1
-    ];
-    const size = [10.0,10.0,10.0,10.0,10.0];
-    
-  //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
+    const verticesBase = [0, 0, 0, 0, 1, 0, 0, 2, 0, 1, 0, 0, 1, 1, 0, 1, 2, 0];
+    for (let x = -300; x <= 300; x++) {
+      for (let y = -300; y <= 300; y++) {
+        verticesBase.push(x);
+        verticesBase.push(y);
+        verticesBase.push(0);
+      }
+    }
+    console.log(verticesBase);
+    //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
     const vertices = new THREE.Float32BufferAttribute(verticesBase, 3);
     geometry.addAttribute('position', vertices);
-    const sizes = new THREE.Float32BufferAttribute(size, 1);
-    geometry.addAttribute('size', sizes);
-    const colors = new THREE.Uint8BufferAttribute(colorsBase, 4);
-    colors.normalized = true;
-    geometry.addAttribute( 'color', colors );
 
     // Material
 
-      const meshMaterial = new THREE.ShaderMaterial({
-        vertexShader: vertexShader,
-        fragmentShader: fragmentShader,
-      });
+    //type参考
+    //https://qiita.com/kitasenjudesign/items/1657d9556591284a43c8
+    const uniforms = {
+      resolution: {
+        type: 'v2',
+        value: new THREE.Vector2(600, 600),
+      },
+    };
+    const meshMaterial = new THREE.ShaderMaterial({
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader,
+      uniforms: uniforms,
+    });
 
-      const cloud = new THREE.Points(geometry, meshMaterial);
-      scene.add(cloud);
+    const cloud = new THREE.Points(geometry, meshMaterial);
+    scene.add(cloud);
 
-      let step = 0;
-      renderer.render(scene, camera);
-
-    }
+    renderer.render(scene, camera);
+  }
 
   function loadShaderSource(vsPath, fsPath, callback): void {
     let vs, fs;

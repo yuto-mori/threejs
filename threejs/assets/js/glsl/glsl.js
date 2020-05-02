@@ -50685,7 +50685,7 @@ window.addEventListener('DOMContentLoaded', function () {
      */
     var camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](50, 600 / 600, 0.1, 2000);
     //カメラの位置
-    camera.position.set(0, 0, 600 / 2 / Math.tan(25 * Math.PI / 180));
+    camera.position.set(0, 0, 600 / 2 / Math.tan((25 * Math.PI) / 180));
     //全体をうつす時のカメラ位置 (height or width)/2/Math.tan(fov/2 * Math.PI/180)
     camera.lookAt(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]());
     // canvasをbodyに追加
@@ -50709,37 +50709,34 @@ window.addEventListener('DOMContentLoaded', function () {
         // シェーダに送れるデフォルトの値
         // position, faceIndex, normal, color, uv, uv2
         var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]();
-        var verticesBase = [
-            0.0, 0.0, 0.0,
-            1.0, 1.0, 0.0,
-            -1.0, 1.0, 0.0,
-            1.0, -1.0, 0.0,
-            -1.0, -1.0, 0.0 // 5 つ目の頂点の X, Y, Z
-        ];
-        var colorsBase = [
-            255.0, 255.0, 255.0, 1,
-            0.0, 255.0, 255.0, 1,
-            255.0, 0.0, 255.0, 1,
-            255.0, 255.0, 0.0, 1,
-            255.0, 255.0, 255.0, 1
-        ];
-        var size = [10.0, 10.0, 10.0, 10.0, 10.0];
+        var verticesBase = [0, 0, 0, 0, 1, 0, 0, 2, 0, 1, 0, 0, 1, 1, 0, 1, 2, 0];
+        for (var x = -300; x <= 300; x++) {
+            for (var y = -300; y <= 300; y++) {
+                verticesBase.push(x);
+                verticesBase.push(y);
+                verticesBase.push(0);
+            }
+        }
+        console.log(verticesBase);
         //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
         var vertices = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](verticesBase, 3);
         geometry.addAttribute('position', vertices);
-        var sizes = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](size, 1);
-        geometry.addAttribute('size', sizes);
-        var colors = new three__WEBPACK_IMPORTED_MODULE_0__["Uint8BufferAttribute"](colorsBase, 4);
-        colors.normalized = true;
-        geometry.addAttribute('color', colors);
         // Material
+        //type参考
+        //https://qiita.com/kitasenjudesign/items/1657d9556591284a43c8
+        var uniforms = {
+            resolution: {
+                type: 'v2',
+                value: new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](600, 600),
+            },
+        };
         var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({
             vertexShader: vertexShader,
             fragmentShader: fragmentShader,
+            uniforms: uniforms,
         });
         var cloud = new three__WEBPACK_IMPORTED_MODULE_0__["Points"](geometry, meshMaterial);
         scene.add(cloud);
-        var step = 0;
         renderer.render(scene, camera);
     }
     function loadShaderSource(vsPath, fsPath, callback) {

@@ -50745,16 +50745,18 @@ window.addEventListener('DOMContentLoaded', function () {
         // Material
         var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
         var texture = loader.load('/threejs/assets/img/carousel01/01.jpg', onRender);
+        //type参考
+        //https://qiita.com/kitasenjudesign/items/1657d9556591284a43c8
         function onRender() {
             var uniforms = {
                 uTex: {
                     type: 't',
-                    value: texture
+                    value: texture,
                 },
                 time: {
                     type: 'f',
                     value: 0.2,
-                }
+                },
             };
             var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({
                 uniforms: uniforms,
@@ -50763,7 +50765,7 @@ window.addEventListener('DOMContentLoaded', function () {
             });
             var cloud = new three__WEBPACK_IMPORTED_MODULE_0__["Points"](geometry, meshMaterial);
             scene.add(cloud);
-            var step = 0;
+            //let step = 0;
             render();
             var startTime = Date.now();
             var nowTime = 0;
