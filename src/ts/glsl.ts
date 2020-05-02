@@ -20,7 +20,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const camera = new THREE.PerspectiveCamera(50, 600 / 600, 0.1, 2000);
 
   //カメラの位置
-  camera.position.set(0, 0, 1000);
+  camera.position.set(0, 0, 600/2/Math.tan(25 * Math.PI/180));
   //全体をうつす時のカメラ位置 (height or width)/2/Math.tan(fov/2 * Math.PI/180)
   camera.lookAt(new THREE.Vector3());
 
@@ -34,8 +34,8 @@ window.addEventListener('DOMContentLoaded', () => {
    * @param {function} callback
    */
   loadShaderSource(
-    '/threejs/assets/shader/scene.vert',
-    '/threejs/assets/shader/scene.frag',
+    '/threejs/assets/shader/glsl/scene.vert',
+    '/threejs/assets/shader/glsl/scene.frag',
     (shader) => {
       const vertexShader = shader.vs;
       const fragmentShader = shader.fs;
@@ -51,34 +51,25 @@ window.addEventListener('DOMContentLoaded', () => {
     // シェーダに送れるデフォルトの値
     // position, faceIndex, normal, color, uv, uv2
     const geometry = new THREE.BufferGeometry();
-    const verticesBase = [];
-    const colorsBase = [];
-    const uv = [];// 画像の頂点の色を取得する
-    const size = [];
-    let width = 512;
-    let height = 256;             
-    let halfX = width / 2.0;
-    let halfY = height /2.0       
-    let interval = 0.6;           
-    let countX = width / interval;
-    let countY = height / interval;
-    for(let i = 0; i <= countX; ++i){
-      // 横位置
-      let x = -halfX + i * interval;
-      for(let j = 0; j <= countY ; ++j){
-          // 縦位置
-          let y = -halfY + j * interval;
-          verticesBase.push(x, y, 2.0);
-          uv.push(i / countX,  j / countY );
-          size.push(1.0);
-          colorsBase.push(255.0,255.0,255.0,1);
-      }
-  }
+    const verticesBase = [
+      0.0,  0.0,  0.0, // 1 つ目の頂点の X, Y, Z
+             300.0,  300.0,  0.0, // 2 つ目の頂点の X, Y, Z
+            -300.0,  300.0,  0.0, // 3 つ目の頂点の X, Y, Z
+             300.0, -300.0,  0.0, // 4 つ目の頂点の X, Y, Z
+            -300.0, -300.0,  0.0  // 5 つ目の頂点の X, Y, Z
+    ];
+    const colorsBase = [
+      255.0,255.0,255.0,1,
+      0.0,255.0,255.0,1,
+      255.0,0.0,255.0,1,
+      255.0,255.0,0.0,1,
+      255.0,255.0,255.0,1
+    ];
+    const size = [10.0,10.0,10.0,10.0,10.0];
+    
   //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
     const vertices = new THREE.Float32BufferAttribute(verticesBase, 3);
     geometry.addAttribute('position', vertices);
-    const uvs = new THREE.Float32BufferAttribute(uv, 2);
-    geometry.addAttribute('uv', uvs);
     const sizes = new THREE.Float32BufferAttribute(size, 1);
     geometry.addAttribute('size', sizes);
     const colors = new THREE.Uint8BufferAttribute(colorsBase, 4);
@@ -86,26 +77,8 @@ window.addEventListener('DOMContentLoaded', () => {
     geometry.addAttribute( 'color', colors );
 
     // Material
-    const loader = new THREE.TextureLoader();
-    const texture = loader.load(
-      '/threejs/assets/img/carousel01/01.jpg',
-      onRender
-    );
-
-    function onRender(): void {
-      const uniforms = {
-        uTex: {
-          type:'t',
-          value: texture
-        },
-        time: {
-          type:'f',
-          value:0.2,
-        }
-      };
 
       const meshMaterial = new THREE.ShaderMaterial({
-        uniforms: uniforms,
         vertexShader: vertexShader,
         fragmentShader: fragmentShader,
       });
@@ -114,24 +87,9 @@ window.addEventListener('DOMContentLoaded', () => {
       scene.add(cloud);
 
       let step = 0;
-      render();
+      renderer.render(scene, camera);
 
-      const startTime = Date.now();
-      let nowTime = 0;
-
-      function render(){
-         nowTime = (Date.now() - startTime) / 1000;
-        // cloud.rotation.x += 0.01;
-        // cloud.rotation.y += 0.01;
-        // cloud.rotation.z = step;
-
-        meshMaterial.uniforms.time.value = nowTime;
-  
-        requestAnimationFrame(render);
-        renderer.render(scene, camera);
-      }
     }
-  }
 
   function loadShaderSource(vsPath, fsPath, callback): void {
     let vs, fs;

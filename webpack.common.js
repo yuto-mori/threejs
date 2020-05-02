@@ -2,7 +2,10 @@
 //https://ics.media/entry/12140/
 module.exports = {
   // メインとなるJavaScriptファイル（エントリーポイント）
-  entry: './src/ts/main.ts',
+  entry: {
+    'main':'./src/ts/main.ts',
+    'glsl/glsl':'./src/ts/glsl.ts'
+  },
   module: {
     rules: [
       {
@@ -20,5 +23,6 @@ module.exports = {
   output: {
     //  出力ファイルのディレクトリ名
     path: `${__dirname}/threejs/assets/js`,
+    filename: "[name].js"
   },
 };

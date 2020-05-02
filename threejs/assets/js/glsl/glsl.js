@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/ts/main.ts");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/ts/glsl.ts");
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -50656,9 +50656,9 @@ if ( typeof __THREE_DEVTOOLS__ !== 'undefined' ) {
 
 /***/ }),
 
-/***/ "./src/ts/main.ts":
+/***/ "./src/ts/glsl.ts":
 /*!************************!*\
-  !*** ./src/ts/main.ts ***!
+  !*** ./src/ts/glsl.ts ***!
   \************************/
 /*! no exports provided */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -50685,7 +50685,7 @@ window.addEventListener('DOMContentLoaded', function () {
      */
     var camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](50, 600 / 600, 0.1, 2000);
     //カメラの位置
-    camera.position.set(0, 0, 1000);
+    camera.position.set(0, 0, 600 / 2 / Math.tan(25 * Math.PI / 180));
     //全体をうつす時のカメラ位置 (height or width)/2/Math.tan(fov/2 * Math.PI/180)
     camera.lookAt(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]());
     // canvasをbodyに追加
@@ -50696,7 +50696,7 @@ window.addEventListener('DOMContentLoaded', function () {
      * @param {string} fsPath - フラグメントシェーダ
      * @param {function} callback
      */
-    loadShaderSource('/threejs/assets/shader/scene.vert', '/threejs/assets/shader/scene.frag', function (shader) {
+    loadShaderSource('/threejs/assets/shader/glsl/scene.vert', '/threejs/assets/shader/glsl/scene.frag', function (shader) {
         var vertexShader = shader.vs;
         var fragmentShader = shader.fs;
         init(vertexShader, fragmentShader);
@@ -50709,74 +50709,38 @@ window.addEventListener('DOMContentLoaded', function () {
         // シェーダに送れるデフォルトの値
         // position, faceIndex, normal, color, uv, uv2
         var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]();
-        var verticesBase = [];
-        var colorsBase = [];
-        var uv = []; // 画像の頂点の色を取得する
-        var size = [];
-        var width = 512;
-        var height = 256;
-        var halfX = width / 2.0;
-        var halfY = height / 2.0;
-        var interval = 0.6;
-        var countX = width / interval;
-        var countY = height / interval;
-        for (var i = 0; i <= countX; ++i) {
-            // 横位置
-            var x = -halfX + i * interval;
-            for (var j = 0; j <= countY; ++j) {
-                // 縦位置
-                var y = -halfY + j * interval;
-                verticesBase.push(x, y, 2.0);
-                uv.push(i / countX, j / countY);
-                size.push(1.0);
-                colorsBase.push(255.0, 255.0, 255.0, 1);
-            }
-        }
+        var verticesBase = [
+            0.0, 0.0, 0.0,
+            300.0, 300.0, 0.0,
+            -300.0, 300.0, 0.0,
+            300.0, -300.0, 0.0,
+            -300.0, -300.0, 0.0 // 5 つ目の頂点の X, Y, Z
+        ];
+        var colorsBase = [
+            255.0, 255.0, 255.0, 1,
+            0.0, 255.0, 255.0, 1,
+            255.0, 0.0, 255.0, 1,
+            255.0, 255.0, 0.0, 1,
+            255.0, 255.0, 255.0, 1
+        ];
+        var size = [10.0, 10.0, 10.0, 10.0, 10.0];
         //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
         var vertices = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](verticesBase, 3);
         geometry.addAttribute('position', vertices);
-        var uvs = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](uv, 2);
-        geometry.addAttribute('uv', uvs);
         var sizes = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](size, 1);
         geometry.addAttribute('size', sizes);
         var colors = new three__WEBPACK_IMPORTED_MODULE_0__["Uint8BufferAttribute"](colorsBase, 4);
         colors.normalized = true;
         geometry.addAttribute('color', colors);
         // Material
-        var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
-        var texture = loader.load('/threejs/assets/img/carousel01/01.jpg', onRender);
-        function onRender() {
-            var uniforms = {
-                uTex: {
-                    type: 't',
-                    value: texture
-                },
-                time: {
-                    type: 'f',
-                    value: 0.2,
-                }
-            };
-            var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({
-                uniforms: uniforms,
-                vertexShader: vertexShader,
-                fragmentShader: fragmentShader,
-            });
-            var cloud = new three__WEBPACK_IMPORTED_MODULE_0__["Points"](geometry, meshMaterial);
-            scene.add(cloud);
-            var step = 0;
-            render();
-            var startTime = Date.now();
-            var nowTime = 0;
-            function render() {
-                nowTime = (Date.now() - startTime) / 1000;
-                // cloud.rotation.x += 0.01;
-                // cloud.rotation.y += 0.01;
-                // cloud.rotation.z = step;
-                meshMaterial.uniforms.time.value = nowTime;
-                requestAnimationFrame(render);
-                renderer.render(scene, camera);
-            }
-        }
+        var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({
+            vertexShader: vertexShader,
+            fragmentShader: fragmentShader,
+        });
+        var cloud = new three__WEBPACK_IMPORTED_MODULE_0__["Points"](geometry, meshMaterial);
+        scene.add(cloud);
+        var step = 0;
+        renderer.render(scene, camera);
     }
     function loadShaderSource(vsPath, fsPath, callback) {
         var vs, fs;
@@ -50808,4 +50772,4 @@ window.addEventListener('DOMContentLoaded', function () {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=main.js.map
+//# sourceMappingURL=glsl.js.map
