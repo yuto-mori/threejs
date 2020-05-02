@@ -8,7 +8,6 @@ uniform float time;
 
    void main() {
       vColor = color;
-      vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
       gl_PointSize = size;
-      gl_Position = projectionMatrix * mvPosition;
+      gl_Position = vec4(position, 1.0);
    }

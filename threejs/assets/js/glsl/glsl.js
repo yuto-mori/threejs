@@ -50711,10 +50711,10 @@ window.addEventListener('DOMContentLoaded', function () {
         var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]();
         var verticesBase = [
             0.0, 0.0, 0.0,
-            300.0, 300.0, 0.0,
-            -300.0, 300.0, 0.0,
-            300.0, -300.0, 0.0,
-            -300.0, -300.0, 0.0 // 5 つ目の頂点の X, Y, Z
+            1.0, 1.0, 0.0,
+            -1.0, 1.0, 0.0,
+            1.0, -1.0, 0.0,
+            -1.0, -1.0, 0.0 // 5 つ目の頂点の X, Y, Z
         ];
         var colorsBase = [
             255.0, 255.0, 255.0, 1,

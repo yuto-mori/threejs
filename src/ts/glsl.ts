@@ -53,10 +53,10 @@ window.addEventListener('DOMContentLoaded', () => {
     const geometry = new THREE.BufferGeometry();
     const verticesBase = [
       0.0,  0.0,  0.0, // 1 つ目の頂点の X, Y, Z
-             300.0,  300.0,  0.0, // 2 つ目の頂点の X, Y, Z
-            -300.0,  300.0,  0.0, // 3 つ目の頂点の X, Y, Z
-             300.0, -300.0,  0.0, // 4 つ目の頂点の X, Y, Z
-            -300.0, -300.0,  0.0  // 5 つ目の頂点の X, Y, Z
+             1.0,  1.0,  0.0, // 2 つ目の頂点の X, Y, Z
+            -1.0,  1.0,  0.0, // 3 つ目の頂点の X, Y, Z
+             1.0, -1.0,  0.0, // 4 つ目の頂点の X, Y, Z
+            -1.0, -1.0,  0.0  // 5 つ目の頂点の X, Y, Z
     ];
     const colorsBase = [
       255.0,255.0,255.0,1,
