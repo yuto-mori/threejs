@@ -51,11 +51,13 @@ window.addEventListener('DOMContentLoaded', () => {
     // シェーダに送れるデフォルトの値
     // position, faceIndex, normal, color, uv, uv2
     const geometry = new THREE.BufferGeometry();
-    const verticesBase = [0, 0, 0, 0, 1, 0, 0, 2, 0, 1, 0, 0, 1, 1, 0, 1, 2, 0];
+    const verticesBase = [];
+    let i = 0;
     for (let x = -300; x <= 300; x++) {
+      i += 10;
       for (let y = -300; y <= 300; y++) {
         verticesBase.push(x);
-        verticesBase.push(y);
+        verticesBase.push(-y);
         verticesBase.push(0);
       }
     }

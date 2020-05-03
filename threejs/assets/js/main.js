@@ -50744,18 +50744,19 @@ window.addEventListener('DOMContentLoaded', function () {
         geometry.addAttribute('color', colors);
         // Material
         var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
-        var texture = loader.load('/threejs/assets/img/carousel01/01.jpg', onRender);
+        var texture = [];
+        texture.push(loader.load('/threejs/assets/img/carousel01/01.jpg', onRender), loader.load('/threejs/assets/img/carousel01/02.jpg'), loader.load('/threejs/assets/img/carousel01/03.jpg'));
         //type参考
         //https://qiita.com/kitasenjudesign/items/1657d9556591284a43c8
         function onRender() {
             var uniforms = {
                 uTex: {
                     type: 't',
-                    value: texture,
+                    value: texture[0],
                 },
                 time: {
                     type: 'f',
-                    value: 0.2,
+                    value: 0.0,
                 },
             };
             var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({
@@ -50768,14 +50769,31 @@ window.addEventListener('DOMContentLoaded', function () {
             //let step = 0;
             render();
             var startTime = Date.now();
-            var nowTime = 0;
+            var nowTime = 1;
+            var imageNum = 0;
+            var flag = false;
             function render() {
-                nowTime = (Date.now() - startTime) / 1000;
-                // cloud.rotation.x += 0.01;
-                // cloud.rotation.y += 0.01;
-                // cloud.rotation.z = step;
-                meshMaterial.uniforms.time.value = nowTime;
-                requestAnimationFrame(render);
+                //nowTime = (Date.now() - startTime) / 1000;
+                meshMaterial.uniforms.time.value = Math.sin(nowTime) * 20;
+                if (Math.sin(nowTime) * 20 < 1 && Math.sin(nowTime) * 20 > -1) {
+                    setTimeout(render, 500);
+                    meshMaterial.uniforms.time.value = 1;
+                    flag = true;
+                }
+                else if (Math.sin(nowTime) * 20 > 19.999 ||
+                    Math.sin(nowTime) * 20 < -19.999) {
+                    setTimeout(render, 30);
+                    meshMaterial.uniforms.uTex.value = texture[imageNum];
+                    if (flag) {
+                        imageNum += 1;
+                        imageNum = imageNum % 3;
+                        flag = false;
+                    }
+                }
+                else {
+                    setTimeout(render, 30);
+                }
+                nowTime += 0.01;
                 renderer.render(scene, camera);
             }
         }

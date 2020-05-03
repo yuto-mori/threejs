@@ -50709,11 +50709,13 @@ window.addEventListener('DOMContentLoaded', function () {
         // シェーダに送れるデフォルトの値
         // position, faceIndex, normal, color, uv, uv2
         var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]();
-        var verticesBase = [0, 0, 0, 0, 1, 0, 0, 2, 0, 1, 0, 0, 1, 1, 0, 1, 2, 0];
+        var verticesBase = [];
+        var i = 0;
         for (var x = -300; x <= 300; x++) {
+            i += 10;
             for (var y = -300; y <= 300; y++) {
                 verticesBase.push(x);
-                verticesBase.push(y);
+                verticesBase.push(-y);
                 verticesBase.push(0);
             }
         }
