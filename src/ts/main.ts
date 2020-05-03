@@ -68,9 +68,14 @@ window.addEventListener('DOMContentLoaded', () => {
       for (let j = 0; j <= countY; ++j) {
         // 縦位置
         const y = -halfY + j * interval;
-        verticesBase.push(x, y, 2.0);
+        //verticesBase.push(x, y, 0);
+        if(i === 0 && j === 0){
+          verticesBase.push(x, y, 30);
+      } else {
+        verticesBase.push(x, y, 0);
+      }
         uv.push(i / countX, j / countY);
-        size.push(1.0);
+        size.push(10.0);
         colorsBase.push(255.0, 255.0, 255.0, 1);
       }
     }
@@ -127,6 +132,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
       function render(): void {
         //nowTime = (Date.now() - startTime) / 1000;
+        cloud.rotation.y += 0.01;
         meshMaterial.uniforms.time.value = Math.sin(nowTime) * 20;
         if (Math.sin(nowTime) * 20 < 1 && Math.sin(nowTime) * 20 > -1) {
           setTimeout(render, 500);
