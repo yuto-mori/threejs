@@ -138,7 +138,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
         if (Math.sin(nowTime) * 10 < 1 && Math.sin(nowTime) * 10 > -1) {
           //nowtimeが1以下になったら、いったん画像を止めて見せる
-          setTimeout(render, 500);
+          setTimeout(render, 150);
           meshMaterial.uniforms.time.value = 1;
           flag = true;
         } else if (
