@@ -20,7 +20,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const camera = new THREE.PerspectiveCamera(50, 600 / 600, 0.1, 2000);
 
   //カメラの位置
-  camera.position.set(0, 0, 1000);
+  camera.position.set(0, 0, 600);
   //全体をうつす時のカメラ位置 (height or width)/2/Math.tan(fov/2 * Math.PI/180)
   camera.lookAt(new THREE.Vector3());
 
@@ -67,15 +67,15 @@ window.addEventListener('DOMContentLoaded', () => {
       const x = -halfX + i * interval;
       for (let j = 0; j <= countY; ++j) {
         // 縦位置
-        const y = -halfY + j * interval;
+        let y = -halfY + j * interval;
         //verticesBase.push(x, y, 0);
-        if(i === 0 && j === 0){
-          verticesBase.push(x, y, 30);
-      } else {
+        // const r = Math.random() ;
+        // const r2 = Math.random() ;
+        // x = Math.sqrt(r2) * 2000  * Math.cos(r * Math.PI *2) ;
+        // y = Math.sqrt(r2) * 2000 * Math.sin(r * Math.PI *2) ;
         verticesBase.push(x, y, 0);
-      }
         uv.push(i / countX, j / countY);
-        size.push(10.0);
+        size.push(1.0);
         colorsBase.push(255.0, 255.0, 255.0, 1);
       }
     }
@@ -121,7 +121,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
       const cloud = new THREE.Points(geometry, meshMaterial);
       scene.add(cloud);
-
+    
       //let step = 0;
       render();
 
@@ -132,16 +132,20 @@ window.addEventListener('DOMContentLoaded', () => {
 
       function render(): void {
         //nowTime = (Date.now() - startTime) / 1000;
-        cloud.rotation.y += 0.01;
-        meshMaterial.uniforms.time.value = Math.sin(nowTime) * 20;
-        if (Math.sin(nowTime) * 20 < 1 && Math.sin(nowTime) * 20 > -1) {
+        //cloud.rotation.y += 0.01;
+        //シェーダにデータを送る
+        meshMaterial.uniforms.time.value = Math.sin(nowTime) * 10;
+
+        if (Math.sin(nowTime) * 10 < 1 && Math.sin(nowTime) * 10 > -1) {
+          //nowtimeが1以下になったら、いったん画像を止めて見せる
           setTimeout(render, 500);
           meshMaterial.uniforms.time.value = 1;
           flag = true;
         } else if (
-          Math.sin(nowTime) * 20 > 19.999 ||
-          Math.sin(nowTime) * 20 < -19.999
+          Math.sin(nowTime) * 10 > 9.999 ||
+          Math.sin(nowTime) * 10 < -9.999
         ) {
+          //nowtimeが9.999以上、nowtimeが-9.999以下になったら、いったん画像を変更
           setTimeout(render, 30);
           meshMaterial.uniforms.uTex.value = texture[imageNum];
           if (flag) {
@@ -150,6 +154,7 @@ window.addEventListener('DOMContentLoaded', () => {
             flag = false;
           }
         } else {
+          //上記意外のときは0.03のスピードでrender関数を更新
           setTimeout(render, 30);
         }
         nowTime += 0.01;
