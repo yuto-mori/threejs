@@ -4,7 +4,8 @@ module.exports = {
   // メインとなるJavaScriptファイル（エントリーポイント）
   entry: {
     'main':'./src/ts/main.ts',
-    'glsl/glsl':'./src/ts/glsl.ts'
+    'glsl/glsl':'./src/ts/glsl.ts',
+    'texture/texture':'./src/ts/texture.ts'
   },
   module: {
     rules: [

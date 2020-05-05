@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/ts/glsl.ts");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/ts/texture.ts");
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -50656,10 +50656,10 @@ if ( typeof __THREE_DEVTOOLS__ !== 'undefined' ) {
 
 /***/ }),
 
-/***/ "./src/ts/glsl.ts":
-/*!************************!*\
-  !*** ./src/ts/glsl.ts ***!
-  \************************/
+/***/ "./src/ts/texture.ts":
+/*!***************************!*\
+  !*** ./src/ts/texture.ts ***!
+  \***************************/
 /*! no exports provided */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -50710,10 +50710,10 @@ window.addEventListener('DOMContentLoaded', function () {
         // position, faceIndex, normal, color, uv, uv2
         var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]();
         var verticesBase = [
-            -300, 300, 0.0,
-            300, 300, 0.0,
-            -300, -300, 0.0,
-            300, -300, 0.0
+            -300, 150, 0.0,
+            300, 150, 0.0,
+            -300, -150, 0.0,
+            300, -150, 0.0
         ];
         //頂点を結ぶ順番
         //https://qiita.com/edo_m18/items/ea34ad77238d0caf5142
@@ -50721,28 +50721,45 @@ window.addEventListener('DOMContentLoaded', function () {
             0, 2, 1,
             1, 2, 3
         ];
+        var uv = [
+            0.0, 1.0,
+            1.0, 1.0,
+            0.0, 0.0,
+            1.0, 0.0
+        ];
         //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
         var vertices = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](verticesBase, 3);
         geometry.addAttribute('position', vertices);
+        var uvs = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](uv, 2);
+        geometry.addAttribute('uv', uvs);
         var indices = new three__WEBPACK_IMPORTED_MODULE_0__["Uint32BufferAttribute"](indice, 1);
         geometry.addAttribute('index', indices);
         // Material
+        var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
+        var texture = [];
+        texture.push(loader.load('/threejs/assets/img/carousel01/01.jpg', onRender));
         //type参考
         //https://qiita.com/kitasenjudesign/items/1657d9556591284a43c8
-        var uniforms = {
-            resolution: {
-                type: 'v2',
-                value: new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](600, 600),
-            },
-        };
-        var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({
-            vertexShader: vertexShader,
-            fragmentShader: fragmentShader,
-            uniforms: uniforms,
-        });
-        var mesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geometry, meshMaterial);
-        scene.add(mesh);
-        renderer.render(scene, camera);
+        function onRender() {
+            var uniforms = {
+                uTex: {
+                    type: 't',
+                    value: texture[0],
+                },
+                resolution: {
+                    type: 'v2',
+                    value: new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](600, 600),
+                },
+            };
+            var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({
+                vertexShader: vertexShader,
+                fragmentShader: fragmentShader,
+                uniforms: uniforms,
+            });
+            var mesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geometry, meshMaterial);
+            scene.add(mesh);
+            renderer.render(scene, camera);
+        }
     }
     function loadShaderSource(vsPath, fsPath, callback) {
         var vs, fs;
@@ -50774,4 +50791,4 @@ window.addEventListener('DOMContentLoaded', function () {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=glsl.js.map
+//# sourceMappingURL=texture.js.map

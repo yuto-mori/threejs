@@ -52,10 +52,10 @@ window.addEventListener('DOMContentLoaded', () => {
     // position, faceIndex, normal, color, uv, uv2
     const geometry = new THREE.BufferGeometry();
     const verticesBase = [
-      -300,  300,  0.0,
-      300,  300,  0.0,
-      -300, -300,  0.0,
-      300, -300,  0.0
+      -300,  150,  0.0,
+      300,  150,  0.0,
+      -300, -150,  0.0,
+      300, -150,  0.0
     ];
     //頂点を結ぶ順番
     //https://qiita.com/edo_m18/items/ea34ad77238d0caf5142
@@ -64,16 +64,35 @@ window.addEventListener('DOMContentLoaded', () => {
       1, 2, 3
     ]
 
+    const uv = [
+      0.0, 1.0,
+      1.0, 1.0,
+      0.0, 0.0,
+      1.0, 0.0
+    ]
+
     //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
     const vertices = new THREE.Float32BufferAttribute(verticesBase, 3);
     geometry.addAttribute('position', vertices);
+    const uvs = new THREE.Float32BufferAttribute(uv, 2);
+    geometry.addAttribute('uv', uvs);
     const indices = new THREE.Uint32BufferAttribute(indice,1);
     geometry.addAttribute('index', indices);
 
     // Material
+    const loader = new THREE.TextureLoader();
+    const texture = [];
+    texture.push(
+      loader.load('/threejs/assets/img/carousel01/01.jpg', onRender),
+    );
     //type参考
     //https://qiita.com/kitasenjudesign/items/1657d9556591284a43c8
+    function onRender(): void {
     const uniforms = {
+      uTex: {
+        type: 't',
+        value: texture[0],
+      },
       resolution: {
         type: 'v2',
         value: new THREE.Vector2(600, 600),
@@ -89,6 +108,7 @@ window.addEventListener('DOMContentLoaded', () => {
     scene.add(mesh);
 
     renderer.render(scene, camera);
+  }
 }
 
   function loadShaderSource(vsPath, fsPath, callback): void {
