@@ -50709,20 +50709,23 @@ window.addEventListener('DOMContentLoaded', function () {
         // シェーダに送れるデフォルトの値
         // position, faceIndex, normal, color, uv, uv2
         var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]();
-        var verticesBase = [];
-        var i = 0;
-        for (var x = -300; x <= 300; x++) {
-            i += 10;
-            for (var y = -300; y <= 300; y++) {
-                verticesBase.push(x);
-                verticesBase.push(-y);
-                verticesBase.push(0);
-            }
-        }
-        console.log(verticesBase);
+        var verticesBase = [
+            -512, 512, 0.0,
+            512, 512, 0.0,
+            -512, -512, 0.0,
+            512, -512, 0.0
+        ];
+        //頂点を結ぶ順番
+        //https://qiita.com/edo_m18/items/ea34ad77238d0caf5142
+        var indice = [
+            0, 2, 1,
+            1, 2, 3
+        ];
         //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
         var vertices = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](verticesBase, 3);
         geometry.addAttribute('position', vertices);
+        var indices = new three__WEBPACK_IMPORTED_MODULE_0__["Uint16BufferAttribute"](indice, 1);
+        geometry.addAttribute('index', indices);
         // Material
         //type参考
         //https://qiita.com/kitasenjudesign/items/1657d9556591284a43c8
@@ -50737,8 +50740,8 @@ window.addEventListener('DOMContentLoaded', function () {
             fragmentShader: fragmentShader,
             uniforms: uniforms,
         });
-        var cloud = new three__WEBPACK_IMPORTED_MODULE_0__["Points"](geometry, meshMaterial);
-        scene.add(cloud);
+        var mesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geometry, meshMaterial);
+        scene.add(mesh);
         renderer.render(scene, camera);
     }
     function loadShaderSource(vsPath, fsPath, callback) {

@@ -50685,7 +50685,7 @@ window.addEventListener('DOMContentLoaded', function () {
      */
     var camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](50, 600 / 600, 0.1, 2000);
     //カメラの位置
-    camera.position.set(0, 0, 600);
+    camera.position.set(0, 0, 512 / 2 / Math.tan((25 * Math.PI) / 180));
     //全体をうつす時のカメラ位置 (height or width)/2/Math.tan(fov/2 * Math.PI/180)
     camera.lookAt(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]());
     // canvasをbodyに追加
@@ -50717,7 +50717,7 @@ window.addEventListener('DOMContentLoaded', function () {
         var height = 256;
         var halfX = width / 2.0;
         var halfY = height / 2.0;
-        var interval = 0.6;
+        var interval = 0.8;
         var countX = width / interval;
         var countY = height / interval;
         for (var i = 0; i <= countX; ++i) {
@@ -50726,11 +50726,6 @@ window.addEventListener('DOMContentLoaded', function () {
             for (var j = 0; j <= countY; ++j) {
                 // 縦位置
                 var y = -halfY + j * interval;
-                //verticesBase.push(x, y, 0);
-                // const r = Math.random() ;
-                // const r2 = Math.random() ;
-                // x = Math.sqrt(r2) * 2000  * Math.cos(r * Math.PI *2) ;
-                // y = Math.sqrt(r2) * 2000 * Math.sin(r * Math.PI *2) ;
                 verticesBase.push(x, y, 0);
                 uv.push(i / countX, j / countY);
                 size.push(1.0);

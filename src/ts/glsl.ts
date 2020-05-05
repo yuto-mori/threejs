@@ -51,20 +51,23 @@ window.addEventListener('DOMContentLoaded', () => {
     // シェーダに送れるデフォルトの値
     // position, faceIndex, normal, color, uv, uv2
     const geometry = new THREE.BufferGeometry();
-    const verticesBase = [];
-    let i = 0;
-    for (let x = -300; x <= 300; x++) {
-      i += 10;
-      for (let y = -300; y <= 300; y++) {
-        verticesBase.push(x);
-        verticesBase.push(-y);
-        verticesBase.push(0);
-      }
-    }
-    console.log(verticesBase);
+    const verticesBase = [
+      -512,  512,  0.0,
+      512,  512,  0.0,
+      -512, -512,  0.0,
+      512, -512,  0.0
+    ];
+    //頂点を結ぶ順番
+    //https://qiita.com/edo_m18/items/ea34ad77238d0caf5142
+    const indice = [
+      0, 2, 1,
+		  1, 2, 3
+    ]
     //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
     const vertices = new THREE.Float32BufferAttribute(verticesBase, 3);
     geometry.addAttribute('position', vertices);
+    const indices = new THREE.Uint16BufferAttribute(indice,1);
+    geometry.addAttribute('index', indices);
 
     // Material
 
@@ -82,8 +85,8 @@ window.addEventListener('DOMContentLoaded', () => {
       uniforms: uniforms,
     });
 
-    const cloud = new THREE.Points(geometry, meshMaterial);
-    scene.add(cloud);
+    const mesh = new THREE.Mesh(geometry, meshMaterial);
+    scene.add(mesh);
 
     renderer.render(scene, camera);
   }

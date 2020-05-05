@@ -20,7 +20,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const camera = new THREE.PerspectiveCamera(50, 600 / 600, 0.1, 2000);
 
   //カメラの位置
-  camera.position.set(0, 0, 600);
+  camera.position.set(0, 0, 512 / 2 / Math.tan((25 * Math.PI) / 180));
   //全体をうつす時のカメラ位置 (height or width)/2/Math.tan(fov/2 * Math.PI/180)
   camera.lookAt(new THREE.Vector3());
 
@@ -59,7 +59,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const height = 256;
     const halfX = width / 2.0;
     const halfY = height / 2.0;
-    const interval = 0.6;
+    const interval = 0.8;
     const countX = width / interval;
     const countY = height / interval;
     for (let i = 0; i <= countX; ++i) {
@@ -68,11 +68,6 @@ window.addEventListener('DOMContentLoaded', () => {
       for (let j = 0; j <= countY; ++j) {
         // 縦位置
         let y = -halfY + j * interval;
-        //verticesBase.push(x, y, 0);
-        // const r = Math.random() ;
-        // const r2 = Math.random() ;
-        // x = Math.sqrt(r2) * 2000  * Math.cos(r * Math.PI *2) ;
-        // y = Math.sqrt(r2) * 2000 * Math.sin(r * Math.PI *2) ;
         verticesBase.push(x, y, 0);
         uv.push(i / countX, j / countY);
         size.push(1.0);
