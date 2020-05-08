@@ -50672,8 +50672,8 @@ window.addEventListener('DOMContentLoaded', function () {
     // レンダラーを作成
     var renderer = new three__WEBPACK_IMPORTED_MODULE_0__["WebGLRenderer"]();
     renderer.setClearColor(new three__WEBPACK_IMPORTED_MODULE_0__["Color"](0x000000));
-    // レンダラーのサイズを設定
-    renderer.setSize(600, 600);
+    var windowWidth = window.innerWidth;
+    var windowHeight = window.innerHeight;
     // シーンを作成
     var scene = new three__WEBPACK_IMPORTED_MODULE_0__["Scene"]();
     /**
@@ -50683,11 +50683,27 @@ window.addEventListener('DOMContentLoaded', function () {
      * @param {number} near - カメラのどのくらい近くからThree.jsが描画を開始するか 推奨 0.1
      * @param {number} far - カメラからどのくらい遠くまで見えるか 推奨 2000
      */
-    var camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](50, 600 / 600, 0.1, 2000);
-    //カメラの位置
-    camera.position.set(0, 0, 600 / 2 / Math.tan((25 * Math.PI) / 180));
+    //カメラサイズが小さいとウィンドウ幅が大きくなると画面から画が消える（画とwindowsizeを合わせた時）
+    var camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](50, 1, 0.1, 5000);
     //全体をうつす時のカメラ位置 (height or width)/2/Math.tan(fov/2 * Math.PI/180)
     camera.lookAt(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]());
+    function onResize() {
+        // サイズを取得
+        windowWidth = window.innerWidth;
+        windowHeight = window.innerHeight;
+        // レンダラーのサイズを調整する
+        //renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(windowWidth, windowHeight);
+        // カメラのアスペクト比を正す
+        camera.aspect = windowWidth / windowHeight;
+        camera.updateProjectionMatrix();
+        //カメラの位置
+        camera.position.set(0, 0, windowWidth / 2 / Math.tan((25 * Math.PI) / 180));
+    }
+    // 初期化のために実行
+    onResize();
+    // リサイズイベント発生時に実行
+    window.addEventListener('resize', onResize);
     // canvasをbodyに追加
     document.getElementById('js-webgl-output').appendChild(renderer.domElement);
     /**
@@ -50710,17 +50726,14 @@ window.addEventListener('DOMContentLoaded', function () {
         // position, faceIndex, normal, color, uv, uv2
         var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]();
         var verticesBase = [
-            -300, 300, 0.0,
-            300, 300, 0.0,
-            -300, -300, 0.0,
-            300, -300, 0.0
+            -1, 1, 0.0,
+            1, 1, 0.0,
+            -1, -1, 0.0,
+            1, -1, 0.0
         ];
         //頂点を結ぶ順番
         //https://qiita.com/edo_m18/items/ea34ad77238d0caf5142
-        var indice = [
-            0, 2, 1,
-            1, 2, 3
-        ];
+        var indice = [0, 2, 1, 1, 2, 3];
         //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
         var vertices = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](verticesBase, 3);
         geometry.addAttribute('position', vertices);
@@ -50732,7 +50745,11 @@ window.addEventListener('DOMContentLoaded', function () {
         var uniforms = {
             resolution: {
                 type: 'v2',
-                value: new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](600, 600),
+                value: new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](windowWidth, windowHeight),
+            },
+            time: {
+                type: 'f',
+                value: 0.0,
             },
         };
         var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({
@@ -50742,7 +50759,15 @@ window.addEventListener('DOMContentLoaded', function () {
         });
         var mesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geometry, meshMaterial);
         scene.add(mesh);
-        renderer.render(scene, camera);
+        render();
+        var startTime = Date.now();
+        var nowTime = 0;
+        function render() {
+            nowTime = (Date.now() - startTime) / 1000;
+            meshMaterial.uniforms.time.value = nowTime;
+            requestAnimationFrame(render);
+            renderer.render(scene, camera);
+        }
     }
     function loadShaderSource(vsPath, fsPath, callback) {
         var vs, fs;

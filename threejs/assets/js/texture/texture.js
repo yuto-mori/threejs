@@ -50689,14 +50689,22 @@ window.addEventListener('DOMContentLoaded', function () {
     //全体をうつす時のカメラ位置 (height or width)/2/Math.tan(fov/2 * Math.PI/180)
     camera.lookAt(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]());
     // canvasをbodyに追加
-    document.getElementById('js-webgl-output').appendChild(renderer.domElement);
+    var webglOutput = document.getElementById('js-webgl-output');
+    webglOutput.appendChild(renderer.domElement);
+    // mouse座標
+    var mouse = [0.0, 0.0];
+    webglOutput.addEventListener('mousemove', function (event) {
+        var x = event.pageX;
+        var y = 600 - event.pageY - 300 / 2; //- (300/2)はcanvasサイズと画像サイズが違うので補正している（canvasサイズ - 画像サイズ /2）
+        mouse = [x, y];
+    }, false);
     /**
      * シェーダーの読み込み
      * @param {string} vsPath - 頂点シェーダファイル
      * @param {string} fsPath - フラグメントシェーダ
      * @param {function} callback
      */
-    loadShaderSource('/threejs/assets/shader/glsl/scene.vert', '/threejs/assets/shader/glsl/scene.frag', function (shader) {
+    loadShaderSource('/threejs/assets/shader/texture/scene.vert', '/threejs/assets/shader/texture/scene.frag', function (shader) {
         var vertexShader = shader.vs;
         var fragmentShader = shader.fs;
         init(vertexShader, fragmentShader);
@@ -50710,23 +50718,25 @@ window.addEventListener('DOMContentLoaded', function () {
         // position, faceIndex, normal, color, uv, uv2
         var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]();
         var verticesBase = [
-            -300, 150, 0.0,
-            300, 150, 0.0,
-            -300, -150, 0.0,
-            300, -150, 0.0
+            -300,
+            150,
+            0.0,
+            300,
+            150,
+            0.0,
+            -300,
+            -150,
+            0.0,
+            300,
+            -150,
+            0.0,
         ];
         //頂点を結ぶ順番
         //https://qiita.com/edo_m18/items/ea34ad77238d0caf5142
-        var indice = [
-            0, 2, 1,
-            1, 2, 3
-        ];
-        var uv = [
-            0.0, 1.0,
-            1.0, 1.0,
-            0.0, 0.0,
-            1.0, 0.0
-        ];
+        var indice = [0, 2, 1, 1, 2, 3];
+        //画像を貼る
+        //https://www.nogson.blog/entry/2017/11/29/004757
+        var uv = [0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0];
         //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
         var vertices = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](verticesBase, 3);
         geometry.addAttribute('position', vertices);
@@ -50737,7 +50747,7 @@ window.addEventListener('DOMContentLoaded', function () {
         // Material
         var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
         var texture = [];
-        texture.push(loader.load('/threejs/assets/img/carousel01/01.jpg', onRender));
+        texture.push(loader.load('/threejs/assets/img/carousel01/02.jpg', onRender));
         //type参考
         //https://qiita.com/kitasenjudesign/items/1657d9556591284a43c8
         function onRender() {
@@ -50748,7 +50758,11 @@ window.addEventListener('DOMContentLoaded', function () {
                 },
                 resolution: {
                     type: 'v2',
-                    value: new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](600, 600),
+                    value: new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](600, 300),
+                },
+                mouse: {
+                    type: 'v2',
+                    value: new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0, 0),
                 },
             };
             var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({
@@ -50758,7 +50772,13 @@ window.addEventListener('DOMContentLoaded', function () {
             });
             var mesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geometry, meshMaterial);
             scene.add(mesh);
-            renderer.render(scene, camera);
+            render();
+            function render() {
+                meshMaterial.uniforms.mouse.value.x = mouse[0];
+                meshMaterial.uniforms.mouse.value.y = mouse[1];
+                renderer.render(scene, camera);
+                requestAnimationFrame(render);
+            }
         }
     }
     function loadShaderSource(vsPath, fsPath, callback) {

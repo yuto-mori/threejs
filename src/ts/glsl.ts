@@ -5,8 +5,9 @@ window.addEventListener('DOMContentLoaded', () => {
   // レンダラーを作成
   const renderer = new THREE.WebGLRenderer();
   renderer.setClearColor(new THREE.Color(0x000000));
-  // レンダラーのサイズを設定
-  renderer.setSize(600, 600);
+
+  let windowWidth = window.innerWidth;
+  let windowHeight = window.innerHeight;
 
   // シーンを作成
   const scene = new THREE.Scene();
@@ -17,12 +18,30 @@ window.addEventListener('DOMContentLoaded', () => {
    * @param {number} near - カメラのどのくらい近くからThree.jsが描画を開始するか 推奨 0.1
    * @param {number} far - カメラからどのくらい遠くまで見えるか 推奨 2000
    */
-  const camera = new THREE.PerspectiveCamera(50, 600 / 600, 0.1, 2000);
+  //カメラサイズが小さいとウィンドウ幅が大きくなると画面から画が消える（画とwindowsizeを合わせた時）
+  const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 5000);
 
-  //カメラの位置
-  camera.position.set(0, 0, 600 / 2 / Math.tan((25 * Math.PI) / 180));
   //全体をうつす時のカメラ位置 (height or width)/2/Math.tan(fov/2 * Math.PI/180)
   camera.lookAt(new THREE.Vector3());
+  function onResize() {
+    // サイズを取得
+    windowWidth = window.innerWidth;
+    windowHeight = window.innerHeight;
+
+    // レンダラーのサイズを調整する
+    //renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(windowWidth, windowHeight);
+
+    // カメラのアスペクト比を正す
+    camera.aspect = windowWidth / windowHeight;
+    camera.updateProjectionMatrix();
+    //カメラの位置
+    camera.position.set(0, 0, windowWidth / 2 / Math.tan((25 * Math.PI) / 180));
+  }
+  // 初期化のために実行
+  onResize();
+  // リサイズイベント発生時に実行
+  window.addEventListener('resize', onResize);
 
   // canvasをbodyに追加
   document.getElementById('js-webgl-output').appendChild(renderer.domElement);
@@ -52,22 +71,19 @@ window.addEventListener('DOMContentLoaded', () => {
     // position, faceIndex, normal, color, uv, uv2
     const geometry = new THREE.BufferGeometry();
     const verticesBase = [
-      -300,  300,  0.0,
-      300,  300,  0.0,
-      -300, -300,  0.0,
-      300, -300,  0.0
+      -1,  1,  0.0,
+      1,  1,  0.0,
+      -1, -1,  0.0,
+      1, -1,  0.0
     ];
     //頂点を結ぶ順番
     //https://qiita.com/edo_m18/items/ea34ad77238d0caf5142
-    const indice = [
-      0, 2, 1,
-      1, 2, 3
-    ]
+    const indice = [0, 2, 1, 1, 2, 3];
 
     //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
     const vertices = new THREE.Float32BufferAttribute(verticesBase, 3);
     geometry.addAttribute('position', vertices);
-    const indices = new THREE.Uint32BufferAttribute(indice,1);
+    const indices = new THREE.Uint32BufferAttribute(indice, 1);
     geometry.addAttribute('index', indices);
 
     // Material
@@ -76,7 +92,11 @@ window.addEventListener('DOMContentLoaded', () => {
     const uniforms = {
       resolution: {
         type: 'v2',
-        value: new THREE.Vector2(600, 600),
+        value: new THREE.Vector2(windowWidth, windowHeight),
+      },
+      time: {
+        type: 'f',
+        value: 0.0,
       },
     };
     const meshMaterial = new THREE.ShaderMaterial({
@@ -88,8 +108,17 @@ window.addEventListener('DOMContentLoaded', () => {
     const mesh = new THREE.Mesh(geometry, meshMaterial);
     scene.add(mesh);
 
-    renderer.render(scene, camera);
-}
+    render();
+    const startTime = Date.now();
+    let nowTime = 0;
+
+    function render(): void {
+      nowTime = (Date.now() - startTime) / 1000;
+      meshMaterial.uniforms.time.value = nowTime;
+      requestAnimationFrame(render);
+      renderer.render(scene, camera);
+    }
+  }
 
   function loadShaderSource(vsPath, fsPath, callback): void {
     let vs, fs;
