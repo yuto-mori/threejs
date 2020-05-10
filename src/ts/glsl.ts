@@ -70,12 +70,7 @@ window.addEventListener('DOMContentLoaded', () => {
     // シェーダに送れるデフォルトの値
     // position, faceIndex, normal, color, uv, uv2
     const geometry = new THREE.BufferGeometry();
-    const verticesBase = [
-      -1,  1,  0.0,
-      1,  1,  0.0,
-      -1, -1,  0.0,
-      1, -1,  0.0
-    ];
+    const verticesBase = [-1, 1, 0.0, 1, 1, 0.0, -1, -1, 0.0, 1, -1, 0.0];
     //頂点を結ぶ順番
     //https://qiita.com/edo_m18/items/ea34ad77238d0caf5142
     const indice = [0, 2, 1, 1, 2, 3];

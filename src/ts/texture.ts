@@ -33,8 +33,8 @@ window.addEventListener('DOMContentLoaded', () => {
   webglOutput.addEventListener(
     'mousemove',
     (event) => {
-      let x = event.pageX;
-      let y = 600 - event.pageY - 300 / 2; //- (300/2)はcanvasサイズと画像サイズが違うので補正している（canvasサイズ - 画像サイズ /2）
+      const x = event.pageX;
+      const y = 600 - event.pageY - 300 / 2; //- (300/2)はcanvasサイズと画像サイズが違うので補正している（canvasサイズ - 画像サイズ /2）
       mouse = [x, y];
     },
     false

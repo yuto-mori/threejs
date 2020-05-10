@@ -5,7 +5,8 @@ module.exports = {
   entry: {
     'main':'./src/ts/main.ts',
     'glsl/glsl':'./src/ts/glsl.ts',
-    'texture/texture':'./src/ts/texture.ts'
+    'texture/texture':'./src/ts/texture.ts',
+    'particle/particle':'./src/ts/particle.ts'
   },
   module: {
     rules: [
@@ -14,6 +15,11 @@ module.exports = {
         test: /\.ts$/,
         // TypeScript をコンパイルする
         use: 'ts-loader',
+        //型チェックはIDEだけでおこなう
+        //参考:https://mizchi.hatenablog.com/entry/2020/05/03/151022
+        options: {
+          transpileOnly: true,
+        }
       },
     ],
   },
