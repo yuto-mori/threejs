@@ -8,6 +8,7 @@ module.exports = {
     'texture/texture': './src/ts/texture.ts',
     'particle/particle': './src/ts/particle.ts',
     'ray/ray': './src/ts/ray.ts',
+    'carousel-fullsize/carousel-fullsize': './src/ts/carousel-fullsize.ts',
   },
   module: {
     rules: [
