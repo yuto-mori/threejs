@@ -9,6 +9,8 @@ module.exports = {
     'particle/particle': './src/ts/particle.ts',
     'ray/ray': './src/ts/ray.ts',
     'carousel-fullsize/carousel-fullsize': './src/ts/carousel-fullsize.ts',
+    'carousel02/carousel02': './src/ts/carousel02.ts',
+    'texture-fullsize/texture-fullsize': './src/ts/texture-fullsize.ts',
   },
   module: {
     rules: [

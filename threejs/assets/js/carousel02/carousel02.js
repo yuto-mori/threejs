@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/ts/carousel-fullsize.ts");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/ts/carousel02.ts");
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -52102,10 +52102,10 @@ if ( typeof __THREE_DEVTOOLS__ !== 'undefined' ) {
 
 /***/ }),
 
-/***/ "./src/ts/carousel-fullsize.ts":
-/*!*************************************!*\
-  !*** ./src/ts/carousel-fullsize.ts ***!
-  \*************************************/
+/***/ "./src/ts/carousel02.ts":
+/*!******************************!*\
+  !*** ./src/ts/carousel02.ts ***!
+  \******************************/
 /*! no exports provided */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -52121,11 +52121,6 @@ window.addEventListener('DOMContentLoaded', function () {
      * @type {Object}
      */
     var rendererSize = { w: 1024, h: 512 };
-    /**
-     * 1024*2で描画すると重くなるので、下の値でサイズを調整している
-     * @type {number}
-     */
-    var rendererhlfvalue = 2.0;
     renderer.setClearColor(new three__WEBPACK_IMPORTED_MODULE_0__["Color"](0x000000));
     // レンダラーのサイズを設定
     renderer.setSize(rendererSize.w, rendererSize.h);
@@ -52140,18 +52135,29 @@ window.addEventListener('DOMContentLoaded', function () {
      */
     var camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](50, rendererSize.w / rendererSize.h, 0.1, 2000);
     //カメラの位置
-    camera.position.set(0, 0, 512 / rendererhlfvalue / 2 / Math.tan((25 * Math.PI) / 180));
+    camera.position.set(0, 0, rendererSize.w / 2 / Math.tan((25 * Math.PI) / 180));
     //全体をうつす時のカメラ位置 (height or width)/2/Math.tan(fov/2 * Math.PI/180)
     camera.lookAt(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]());
     // canvasをbodyに追加
-    document.getElementById('js-webgl-output').appendChild(renderer.domElement);
+    var webglOutput = document.getElementById('js-webgl-output');
+    webglOutput.appendChild(renderer.domElement);
+    var mouse = [0.0, 0.0];
+    webglOutput.addEventListener('mousemove', function (event) {
+        var windowWidth = window.innerWidth;
+        var target = event.target;
+        var ratio = rendererSize.w / windowWidth;
+        var targetHeight = target.clientHeight;
+        var x = event.pageX * ratio;
+        var y = targetHeight * ratio - event.pageY * ratio;
+        mouse = [x, y];
+    }, false);
     /**
      * シェーダーの読み込み
      * @param {string} vsPath - 頂点シェーダファイル
      * @param {string} fsPath - フラグメントシェーダ
      * @param {function} callback
      */
-    loadShaderSource('/threejs/assets/shader/carousel-fullsize/scene.vert', '/threejs/assets/shader/carousel-fullsize/scene.frag', function (shader) {
+    loadShaderSource('/threejs/assets/shader/carousel02/scene.vert', '/threejs/assets/shader/carousel02/scene.frag', function (shader) {
         var vertexShader = shader.vs;
         var fragmentShader = shader.fs;
         init(vertexShader, fragmentShader);
@@ -52165,42 +52171,43 @@ window.addEventListener('DOMContentLoaded', function () {
         // position, faceIndex, normal, color, uv, uv2
         var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]();
         var verticesBase = [];
-        var colorsBase = [];
-        var uv = []; // 画像の頂点の色を取得する
-        var size = [];
-        var width = rendererSize.w / 2;
-        var height = rendererSize.h / 2;
-        var halfX = width / rendererhlfvalue;
-        var halfY = height / rendererhlfvalue;
-        var interval = 0.8;
-        var countX = width / interval;
-        var countY = height / interval;
-        for (var i = 0; i <= countX; ++i) {
-            // 横位置
-            var x = -halfX + i * interval;
-            for (var j = 0; j <= countY; ++j) {
-                // 縦位置
-                var y = -halfY + j * interval;
-                verticesBase.push(x, y, 0);
-                uv.push(i / countX, j / countY);
-                size.push(2.0);
-                colorsBase.push(255.0, 255.0, 255.0, 1);
-            }
+        var verticesXYZ = [rendererSize.w, rendererSize.h, 0.0];
+        var _loop_1 = function (i) {
+            verticesXYZ.forEach(function (value, index) {
+                if (i === 0 && index === 0) {
+                    verticesBase.push(-value);
+                }
+                else if (i === 2 && index !== 3) {
+                    verticesBase.push(-value);
+                }
+                else if (i === 3 && index === 1) {
+                    verticesBase.push(-value);
+                }
+                else {
+                    verticesBase.push(value);
+                }
+            });
+        };
+        for (var i = 0; i < 4; i++) {
+            _loop_1(i);
         }
+        //頂点を結ぶ順番
+        //https://qiita.com/edo_m18/items/ea34ad77238d0caf5142
+        var indice = [0, 2, 1, 1, 2, 3];
+        //画像を貼る
+        //https://www.nogson.blog/entry/2017/11/29/004757
+        var uv = [0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0];
         //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
         var vertices = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](verticesBase, 3);
         geometry.addAttribute('position', vertices);
         var uvs = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](uv, 2);
         geometry.addAttribute('uv', uvs);
-        var sizes = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](size, 1);
-        geometry.addAttribute('size', sizes);
-        var colors = new three__WEBPACK_IMPORTED_MODULE_0__["Uint8BufferAttribute"](colorsBase, 4);
-        colors.normalized = true;
-        geometry.addAttribute('color', colors);
+        var indices = new three__WEBPACK_IMPORTED_MODULE_0__["Uint32BufferAttribute"](indice, 1);
+        geometry.addAttribute('index', indices);
         // Material
         var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
         var texture = [];
-        texture.push(loader.load('/threejs/assets/img/carousel01/01.jpg', onRender), loader.load('/threejs/assets/img/carousel01/02.jpg'), loader.load('/threejs/assets/img/carousel01/03.jpg'));
+        texture.push(loader.load('/threejs/assets/img/carousel01/02.jpg', onRender));
         //type参考
         //https://qiita.com/kitasenjudesign/items/1657d9556591284a43c8
         function onRender() {
@@ -52209,52 +52216,28 @@ window.addEventListener('DOMContentLoaded', function () {
                     type: 't',
                     value: texture[0],
                 },
-                time: {
-                    type: 'f',
-                    value: 0.0,
+                resolution: {
+                    type: 'v2',
+                    value: new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](rendererSize.w, rendererSize.h),
+                },
+                mouse: {
+                    type: 'v2',
+                    value: new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0, 0),
                 },
             };
             var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({
-                uniforms: uniforms,
                 vertexShader: vertexShader,
                 fragmentShader: fragmentShader,
+                uniforms: uniforms,
             });
-            var cloud = new three__WEBPACK_IMPORTED_MODULE_0__["Points"](geometry, meshMaterial);
-            scene.add(cloud);
-            //let step = 0;
+            var mesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geometry, meshMaterial);
+            scene.add(mesh);
             render();
-            var startTime = Date.now();
-            var nowTime = 1;
-            var imageNum = 0;
-            var flag = false;
             function render() {
-                //nowTime = (Date.now() - startTime) / 1000;
-                //cloud.rotation.y += 0.01;
-                //シェーダにデータを送る
-                meshMaterial.uniforms.time.value = Math.sin(nowTime) * 10;
-                if (Math.sin(nowTime) * 10 < 1 && Math.sin(nowTime) * 10 > -1) {
-                    //nowtimeが1以下になったら、いったん画像を止めて見せる
-                    setTimeout(render, 150);
-                    meshMaterial.uniforms.time.value = 1;
-                    flag = true;
-                }
-                else if (Math.sin(nowTime) * 10 > 9.999 ||
-                    Math.sin(nowTime) * 10 < -9.999) {
-                    //nowtimeが9.999以上、nowtimeが-9.999以下になったら、いったん画像を変更
-                    setTimeout(render, 30);
-                    meshMaterial.uniforms.uTex.value = texture[imageNum];
-                    if (flag) {
-                        imageNum += 1;
-                        imageNum = imageNum % 3;
-                        flag = false;
-                    }
-                }
-                else {
-                    //上記意外のときは0.03のスピードでrender関数を更新
-                    setTimeout(render, 30);
-                }
-                nowTime += 0.01;
+                meshMaterial.uniforms.mouse.value.x = mouse[0];
+                meshMaterial.uniforms.mouse.value.y = mouse[1];
                 renderer.render(scene, camera);
+                requestAnimationFrame(render);
             }
         }
     }
@@ -52288,4 +52271,4 @@ window.addEventListener('DOMContentLoaded', function () {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=carousel-fullsize.js.map
+//# sourceMappingURL=carousel02.js.map
