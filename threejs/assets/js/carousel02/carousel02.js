@@ -52111,21 +52111,25 @@ if ( typeof __THREE_DEVTOOLS__ !== 'undefined' ) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var three__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+/* harmony import */ var _threejs_assets_shader_carousel02_scene_vert__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../threejs/assets/shader/carousel02/scene.vert */ "./threejs/assets/shader/carousel02/scene.vert");
+/* harmony import */ var _threejs_assets_shader_carousel02_scene_frag__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../threejs/assets/shader/carousel02/scene.frag */ "./threejs/assets/shader/carousel02/scene.frag");
+/* harmony import */ var three__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 /* eslint-disable @typescript-eslint/no-use-before-define */
+
+
 
 window.addEventListener('DOMContentLoaded', function () {
     // レンダラーを作成
-    var renderer = new three__WEBPACK_IMPORTED_MODULE_0__["WebGLRenderer"]();
+    var renderer = new three__WEBPACK_IMPORTED_MODULE_2__["WebGLRenderer"]();
     /**
      * @type {Object}
      */
     var rendererSize = { w: 1024, h: 512 };
-    renderer.setClearColor(new three__WEBPACK_IMPORTED_MODULE_0__["Color"](0x000000));
+    renderer.setClearColor(new three__WEBPACK_IMPORTED_MODULE_2__["Color"](0x000000));
     // レンダラーのサイズを設定
     renderer.setSize(rendererSize.w, rendererSize.h);
     // シーンを作成
-    var scene = new three__WEBPACK_IMPORTED_MODULE_0__["Scene"]();
+    var scene = new three__WEBPACK_IMPORTED_MODULE_2__["Scene"]();
     /**
      * カメラを作成
      * @param {number} fov - 視野角 推奨 50
@@ -52133,11 +52137,11 @@ window.addEventListener('DOMContentLoaded', function () {
      * @param {number} near - カメラのどのくらい近くからThree.jsが描画を開始するか 推奨 0.1
      * @param {number} far - カメラからどのくらい遠くまで見えるか 推奨 2000
      */
-    var camera = new three__WEBPACK_IMPORTED_MODULE_0__["PerspectiveCamera"](50, rendererSize.w / rendererSize.h, 0.1, 2000);
+    var camera = new three__WEBPACK_IMPORTED_MODULE_2__["PerspectiveCamera"](50, rendererSize.w / rendererSize.h, 0.1, 2000);
     //カメラの位置
     camera.position.set(0, 0, rendererSize.w / 2 / Math.tan((25 * Math.PI) / 180));
     //全体をうつす時のカメラ位置 (height or width)/2/Math.tan(fov/2 * Math.PI/180)
-    camera.lookAt(new three__WEBPACK_IMPORTED_MODULE_0__["Vector3"]());
+    camera.lookAt(new three__WEBPACK_IMPORTED_MODULE_2__["Vector3"]());
     // canvasをbodyに追加
     var webglOutput = document.getElementById('js-webgl-output');
     webglOutput.appendChild(renderer.domElement);
@@ -52157,11 +52161,7 @@ window.addEventListener('DOMContentLoaded', function () {
      * @param {string} fsPath - フラグメントシェーダ
      * @param {function} callback
      */
-    loadShaderSource('/threejs/assets/shader/carousel02/scene.vert', '/threejs/assets/shader/carousel02/scene.frag', function (shader) {
-        var vertexShader = shader.vs;
-        var fragmentShader = shader.fs;
-        init(vertexShader, fragmentShader);
-    });
+    init(_threejs_assets_shader_carousel02_scene_vert__WEBPACK_IMPORTED_MODULE_0__["default"], _threejs_assets_shader_carousel02_scene_frag__WEBPACK_IMPORTED_MODULE_1__["default"]);
     // geometry
     function init(vertexShader, fragmentShader) {
         // geometry ポイントスプライト
@@ -52169,7 +52169,7 @@ window.addEventListener('DOMContentLoaded', function () {
         // https://qiita.com/kitasenjudesign/items/1657d9556591284a43c8
         // シェーダに送れるデフォルトの値
         // position, faceIndex, normal, color, uv, uv2
-        var geometry = new three__WEBPACK_IMPORTED_MODULE_0__["BufferGeometry"]();
+        var geometry = new three__WEBPACK_IMPORTED_MODULE_2__["BufferGeometry"]();
         var verticesBase = [];
         var verticesXYZ = [rendererSize.w, rendererSize.h, 0.0];
         var _loop_1 = function (i) {
@@ -52198,14 +52198,14 @@ window.addEventListener('DOMContentLoaded', function () {
         //https://www.nogson.blog/entry/2017/11/29/004757
         var uv = [0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0];
         //https://threejs.org/docs/#api/en/core/bufferAttributeTypes/BufferAttributeTypes
-        var vertices = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](verticesBase, 3);
+        var vertices = new three__WEBPACK_IMPORTED_MODULE_2__["Float32BufferAttribute"](verticesBase, 3);
         geometry.addAttribute('position', vertices);
-        var uvs = new three__WEBPACK_IMPORTED_MODULE_0__["Float32BufferAttribute"](uv, 2);
+        var uvs = new three__WEBPACK_IMPORTED_MODULE_2__["Float32BufferAttribute"](uv, 2);
         geometry.addAttribute('uv', uvs);
-        var indices = new three__WEBPACK_IMPORTED_MODULE_0__["Uint32BufferAttribute"](indice, 1);
+        var indices = new three__WEBPACK_IMPORTED_MODULE_2__["Uint32BufferAttribute"](indice, 1);
         geometry.addAttribute('index', indices);
         // Material
-        var loader = new three__WEBPACK_IMPORTED_MODULE_0__["TextureLoader"]();
+        var loader = new three__WEBPACK_IMPORTED_MODULE_2__["TextureLoader"]();
         var texture = [];
         texture.push(loader.load('/threejs/assets/img/carousel01/02.jpg', onRender));
         //type参考
@@ -52218,19 +52218,19 @@ window.addEventListener('DOMContentLoaded', function () {
                 },
                 resolution: {
                     type: 'v2',
-                    value: new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](rendererSize.w, rendererSize.h),
+                    value: new three__WEBPACK_IMPORTED_MODULE_2__["Vector2"](rendererSize.w, rendererSize.h),
                 },
                 mouse: {
                     type: 'v2',
-                    value: new three__WEBPACK_IMPORTED_MODULE_0__["Vector2"](0, 0),
+                    value: new three__WEBPACK_IMPORTED_MODULE_2__["Vector2"](0, 0),
                 },
             };
-            var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_0__["ShaderMaterial"]({
+            var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_2__["ShaderMaterial"]({
                 vertexShader: vertexShader,
                 fragmentShader: fragmentShader,
                 uniforms: uniforms,
             });
-            var mesh = new three__WEBPACK_IMPORTED_MODULE_0__["Mesh"](geometry, meshMaterial);
+            var mesh = new three__WEBPACK_IMPORTED_MODULE_2__["Mesh"](geometry, meshMaterial);
             scene.add(mesh);
             render();
             function render() {
@@ -52241,32 +52241,34 @@ window.addEventListener('DOMContentLoaded', function () {
             }
         }
     }
-    function loadShaderSource(vsPath, fsPath, callback) {
-        var vs, fs;
-        xhr(vsPath, true);
-        xhr(fsPath, false);
-        function xhr(source, isVertex) {
-            var xml = new XMLHttpRequest();
-            xml.open('GET', source, true);
-            xml.setRequestHeader('Pragma', 'no-cache');
-            xml.setRequestHeader('Cache-Control', 'no-cache');
-            xml.onload = function () {
-                if (isVertex) {
-                    vs = xml.responseText;
-                }
-                else {
-                    fs = xml.responseText;
-                }
-                if (vs != null && fs != null) {
-                    console.log('loaded', vsPath, fsPath);
-                    callback({ vs: vs, fs: fs });
-                }
-            };
-            xml.send();
-        }
-    }
 });
 
+
+/***/ }),
+
+/***/ "./threejs/assets/shader/carousel02/scene.frag":
+/*!*****************************************************!*\
+  !*** ./threejs/assets/shader/carousel02/scene.frag ***!
+  \*****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ("//Built-in uniforms and attributes\n//https://threejs.org/docs/#api/en/renderers/webgl/WebGLProgram\nvarying vec4 vColor;\nuniform vec2 resolution;\nvarying vec2 vUv;\nuniform sampler2D uTex;// テクスチャは sampler2D 型\nuniform vec2 mouse;\nfloat fRadius;\nfloat fUzuStrength;\n\nvoid main() {\n\n  float fRadius = 100.0;\n  float fUzuStrength = 3.0;\n  //uvは左上を原点とした0~1の座標\n  vec2 pos = (vUv * resolution) - mouse;\n  //length原点0からのxy(vec2時)地点までの長さ\n  float len = length(pos);\n  //lenは中心を0とした時のx,yの長さ。fRadius以下　の長さだと通常通りの色がつかない\n  if(len >= fRadius) {\n    gl_FragColor = texture2D(uTex, vUv);\n    return;\n  }\n\n  //0 ~ 1　* fUzuStrengthの値をとる\n  //xyの長さがfRadius 以上で0より小さくなる\n  float uzu = min(max(1.0 - (len / fRadius), 0.0), 1.0) * fUzuStrength;\n  //マウスを中心として、fUzuStrength以内で遠ければ遠いほど変化の度合いが大きくなる(sin,cosにはいる値が大きくなる)\n  //xは左にずれる(マウスの位置から値が減る),yは上にずれる(マウスの位置から値が増える)\n  //xyの+-で互いを補っていると考えよう。三角関数を使えばなんとなく円の動きに近くなるのだろう\n  float x = pos.x * cos(uzu) - pos.y * sin(uzu); \n  float y = pos.x * sin(uzu) + pos.y * cos(uzu);\n  //変化している場所をマウスの場所に移す\n  //resolution で割るのは 0 ~ 1の値にするため\n  vec2 retPos = (vec2(x, y) + mouse) / resolution;\n  //utex（画像の）ピクセルから、retPos座標に合うものを取ってきて表示させる\n  vec4 color = texture2D(uTex, retPos);\n  gl_FragColor = color;\n}");
+
+/***/ }),
+
+/***/ "./threejs/assets/shader/carousel02/scene.vert":
+/*!*****************************************************!*\
+  !*** ./threejs/assets/shader/carousel02/scene.vert ***!
+  \*****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ("//Built-in uniforms and attributes\n//https://threejs.org/docs/#api/en/renderers/webgl/WebGLProgram\nattribute vec4 color;\nvarying vec4 vColor;\nvarying vec2 vUv;\n\n   void main() {\n      vUv = uv;\n      vColor = color;\n      vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);\n      gl_Position = projectionMatrix * mvPosition;\n   }");
 
 /***/ })
 

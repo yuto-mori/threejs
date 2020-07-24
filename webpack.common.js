@@ -29,6 +29,18 @@ module.exports = {
           },
         ],
       },
+      {
+        test: /\.(glsl|vs|fs|vert|frag)$/,
+        // glsl用にraw-loaderを入れる
+        // 参考:https://qiita.com/yukiTTT/items/0827e39bcdb8ced681aa
+        // glsl.d.ts というファイルを入れるとtypescriptエラーが消える
+        // 参考:https://blog.5ebec.dev/posts/webpack-typescript-three-js-で-glsl-frag-vert-を外部モジュールとして-import-する/
+        use: [
+          {
+            loader: 'raw-loader',
+          },
+        ],
+      },
     ],
   },
   // import 文で .ts ファイルを解決するため

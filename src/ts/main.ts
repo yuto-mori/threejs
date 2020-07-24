@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as THREE from 'three';
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -67,7 +66,7 @@ window.addEventListener('DOMContentLoaded', () => {
       const x = -halfX + i * interval;
       for (let j = 0; j <= countY; ++j) {
         // 縦位置
-        let y = -halfY + j * interval;
+        const y = -halfY + j * interval;
         verticesBase.push(x, y, 0);
         uv.push(i / countX, j / countY);
         size.push(1.0);
@@ -116,7 +115,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
       const cloud = new THREE.Points(geometry, meshMaterial);
       scene.add(cloud);
-    
+
       //let step = 0;
       render();
 

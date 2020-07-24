@@ -1,4 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
+import vertexShader from '../../threejs/assets/shader/carousel02/scene.vert';
+import fragmentShader from '../../threejs/assets/shader/carousel02/scene.frag';
+
 import * as THREE from 'three';
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -62,15 +65,7 @@ window.addEventListener('DOMContentLoaded', () => {
    * @param {string} fsPath - フラグメントシェーダ
    * @param {function} callback
    */
-  loadShaderSource(
-    '/threejs/assets/shader/carousel02/scene.vert',
-    '/threejs/assets/shader/carousel02/scene.frag',
-    (shader) => {
-      const vertexShader = shader.vs;
-      const fragmentShader = shader.fs;
-      init(vertexShader, fragmentShader);
-    }
-  );
+  init(vertexShader, fragmentShader);
 
   // geometry
   function init(vertexShader, fragmentShader): void {
@@ -152,30 +147,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
         requestAnimationFrame(render);
       }
-    }
-  }
-
-  function loadShaderSource(vsPath, fsPath, callback): void {
-    let vs, fs;
-    xhr(vsPath, true);
-    xhr(fsPath, false);
-    function xhr(source, isVertex): void {
-      const xml = new XMLHttpRequest();
-      xml.open('GET', source, true);
-      xml.setRequestHeader('Pragma', 'no-cache');
-      xml.setRequestHeader('Cache-Control', 'no-cache');
-      xml.onload = (): void => {
-        if (isVertex) {
-          vs = xml.responseText;
-        } else {
-          fs = xml.responseText;
-        }
-        if (vs != null && fs != null) {
-          console.log('loaded', vsPath, fsPath);
-          callback({ vs: vs, fs: fs });
-        }
-      };
-      xml.send();
     }
   }
 });

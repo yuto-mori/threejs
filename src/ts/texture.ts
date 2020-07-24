@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import * as THREE from 'three';
 
 window.addEventListener('DOMContentLoaded', () => {
