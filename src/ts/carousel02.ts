@@ -44,21 +44,6 @@ window.addEventListener('DOMContentLoaded', () => {
   const webglOutput = document.getElementById('js-webgl-output');
   webglOutput.appendChild(renderer.domElement);
 
-  let mouse = [0.0, 0.0];
-  webglOutput.addEventListener(
-    'mousemove',
-    (event) => {
-      const windowWidth = window.innerWidth;
-      const target = event.target as HTMLElement;
-      const ratio = rendererSize.w / windowWidth;
-      const targetHeight = target.clientHeight;
-      const x = event.pageX * ratio;
-      const y = targetHeight * ratio - event.pageY * ratio;
-      mouse = [x, y];
-    },
-    false
-  );
-
   /**
    * シェーダーの読み込み
    * @param {string} vsPath - 頂点シェーダファイル
@@ -110,23 +95,34 @@ window.addEventListener('DOMContentLoaded', () => {
     const loader = new THREE.TextureLoader();
     const texture = [];
     texture.push(
-      loader.load('/threejs/assets/img/carousel01/02.jpg', onRender)
+      loader.load('/threejs/assets/img/carousel01/01.jpg', onRender),
+      loader.load('/threejs/assets/img/carousel01/01_blur.jpg'),
+      loader.load('/threejs/assets/img/carousel01/01_move.jpg'),
+      loader.load('/threejs/assets/img/carousel01/02.jpg')
     );
     //type参考
     //https://qiita.com/kitasenjudesign/items/1657d9556591284a43c8
     function onRender(): void {
       const uniforms = {
-        uTex: {
+        uTex01: {
           type: 't',
           value: texture[0],
+        },
+        uTex02: {
+          type: 't',
+          value: texture[1],
+        },
+        uTex03: {
+          type: 't',
+          value: texture[2],
         },
         resolution: {
           type: 'v2',
           value: new THREE.Vector2(rendererSize.w, rendererSize.h), //解像度はcanvasサイズでなく画像のサイズ
         },
-        mouse: {
-          type: 'v2',
-          value: new THREE.Vector2(0, 0),
+        dispFactor: {
+          type: 'f',
+          value: 0,
         },
       };
       const meshMaterial = new THREE.ShaderMaterial({
@@ -138,14 +134,42 @@ window.addEventListener('DOMContentLoaded', () => {
       const mesh = new THREE.Mesh(geometry, meshMaterial);
       scene.add(mesh);
 
-      render();
+      let progress = 0;
+      const time = 4 * 360; //360で1秒の計算
+      let flag = true;
+      let firstProgress: number;
+      renderer.render(scene, camera);
+      setTimeout(function () {
+        requestAnimationFrame(render);
+      }, 2000);
 
-      function render(): void {
-        meshMaterial.uniforms.mouse.value.x = mouse[0];
-        meshMaterial.uniforms.mouse.value.y = mouse[1];
+      function render(timestamp): void {
+        progress = timestamp / time;
+        if (flag) {
+          firstProgress = progress;
+          flag = false;
+        }
+        meshMaterial.uniforms.dispFactor.value = Math.abs(
+          Math.sin(progress - firstProgress)
+        );
         renderer.render(scene, camera);
 
-        requestAnimationFrame(render);
+        if (Math.sin(progress - firstProgress) < 0) {
+          const restart = () => {
+            if (meshMaterial.uniforms.uTex01.value === texture[0]) {
+              meshMaterial.uniforms.uTex01.value = texture[3];
+              flag = true;
+              requestAnimationFrame(render);
+            } else {
+              meshMaterial.uniforms.uTex01.value = texture[0];
+              flag = true;
+              requestAnimationFrame(render);
+            }
+          };
+          setTimeout(restart, 2000);
+        } else {
+          requestAnimationFrame(render);
+        }
       }
     }
   }

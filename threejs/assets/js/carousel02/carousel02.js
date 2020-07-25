@@ -52145,16 +52145,6 @@ window.addEventListener('DOMContentLoaded', function () {
     // canvasをbodyに追加
     var webglOutput = document.getElementById('js-webgl-output');
     webglOutput.appendChild(renderer.domElement);
-    var mouse = [0.0, 0.0];
-    webglOutput.addEventListener('mousemove', function (event) {
-        var windowWidth = window.innerWidth;
-        var target = event.target;
-        var ratio = rendererSize.w / windowWidth;
-        var targetHeight = target.clientHeight;
-        var x = event.pageX * ratio;
-        var y = targetHeight * ratio - event.pageY * ratio;
-        mouse = [x, y];
-    }, false);
     /**
      * シェーダーの読み込み
      * @param {string} vsPath - 頂点シェーダファイル
@@ -52207,22 +52197,30 @@ window.addEventListener('DOMContentLoaded', function () {
         // Material
         var loader = new three__WEBPACK_IMPORTED_MODULE_2__["TextureLoader"]();
         var texture = [];
-        texture.push(loader.load('/threejs/assets/img/carousel01/02.jpg', onRender));
+        texture.push(loader.load('/threejs/assets/img/carousel01/01.jpg', onRender), loader.load('/threejs/assets/img/carousel01/01_blur.jpg'), loader.load('/threejs/assets/img/carousel01/01_move.jpg'), loader.load('/threejs/assets/img/carousel01/02.jpg'));
         //type参考
         //https://qiita.com/kitasenjudesign/items/1657d9556591284a43c8
         function onRender() {
             var uniforms = {
-                uTex: {
+                uTex01: {
                     type: 't',
                     value: texture[0],
+                },
+                uTex02: {
+                    type: 't',
+                    value: texture[1],
+                },
+                uTex03: {
+                    type: 't',
+                    value: texture[2],
                 },
                 resolution: {
                     type: 'v2',
                     value: new three__WEBPACK_IMPORTED_MODULE_2__["Vector2"](rendererSize.w, rendererSize.h),
                 },
-                mouse: {
-                    type: 'v2',
-                    value: new three__WEBPACK_IMPORTED_MODULE_2__["Vector2"](0, 0),
+                dispFactor: {
+                    type: 'f',
+                    value: 0,
                 },
             };
             var meshMaterial = new three__WEBPACK_IMPORTED_MODULE_2__["ShaderMaterial"]({
@@ -52232,12 +52230,40 @@ window.addEventListener('DOMContentLoaded', function () {
             });
             var mesh = new three__WEBPACK_IMPORTED_MODULE_2__["Mesh"](geometry, meshMaterial);
             scene.add(mesh);
-            render();
-            function render() {
-                meshMaterial.uniforms.mouse.value.x = mouse[0];
-                meshMaterial.uniforms.mouse.value.y = mouse[1];
-                renderer.render(scene, camera);
+            var progress = 0;
+            var time = 4 * 360; //360で1秒の計算
+            var flag = true;
+            var firstProgress;
+            renderer.render(scene, camera);
+            setTimeout(function () {
                 requestAnimationFrame(render);
+            }, 2000);
+            function render(timestamp) {
+                progress = timestamp / time;
+                if (flag) {
+                    firstProgress = progress;
+                    flag = false;
+                }
+                meshMaterial.uniforms.dispFactor.value = Math.abs(Math.sin(progress - firstProgress));
+                renderer.render(scene, camera);
+                if (Math.sin(progress - firstProgress) < 0) {
+                    var restart = function () {
+                        if (meshMaterial.uniforms.uTex01.value === texture[0]) {
+                            meshMaterial.uniforms.uTex01.value = texture[3];
+                            flag = true;
+                            requestAnimationFrame(render);
+                        }
+                        else {
+                            meshMaterial.uniforms.uTex01.value = texture[0];
+                            flag = true;
+                            requestAnimationFrame(render);
+                        }
+                    };
+                    setTimeout(restart, 2000);
+                }
+                else {
+                    requestAnimationFrame(render);
+                }
             }
         }
     }
@@ -52255,7 +52281,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("//Built-in uniforms and attributes\n//https://threejs.org/docs/#api/en/renderers/webgl/WebGLProgram\nvarying vec4 vColor;\nuniform vec2 resolution;\nvarying vec2 vUv;\nuniform sampler2D uTex;// テクスチャは sampler2D 型\nuniform vec2 mouse;\nfloat fRadius;\nfloat fUzuStrength;\n\nvoid main() {\n\n  float fRadius = 100.0;\n  float fUzuStrength = 3.0;\n  //uvは左上を原点とした0~1の座標\n  vec2 pos = (vUv * resolution) - mouse;\n  //length原点0からのxy(vec2時)地点までの長さ\n  float len = length(pos);\n  //lenは中心を0とした時のx,yの長さ。fRadius以下　の長さだと通常通りの色がつかない\n  if(len >= fRadius) {\n    gl_FragColor = texture2D(uTex, vUv);\n    return;\n  }\n\n  //0 ~ 1　* fUzuStrengthの値をとる\n  //xyの長さがfRadius 以上で0より小さくなる\n  float uzu = min(max(1.0 - (len / fRadius), 0.0), 1.0) * fUzuStrength;\n  //マウスを中心として、fUzuStrength以内で遠ければ遠いほど変化の度合いが大きくなる(sin,cosにはいる値が大きくなる)\n  //xは左にずれる(マウスの位置から値が減る),yは上にずれる(マウスの位置から値が増える)\n  //xyの+-で互いを補っていると考えよう。三角関数を使えばなんとなく円の動きに近くなるのだろう\n  float x = pos.x * cos(uzu) - pos.y * sin(uzu); \n  float y = pos.x * sin(uzu) + pos.y * cos(uzu);\n  //変化している場所をマウスの場所に移す\n  //resolution で割るのは 0 ~ 1の値にするため\n  vec2 retPos = (vec2(x, y) + mouse) / resolution;\n  //utex（画像の）ピクセルから、retPos座標に合うものを取ってきて表示させる\n  vec4 color = texture2D(uTex, retPos);\n  gl_FragColor = color;\n}");
+/* harmony default export */ __webpack_exports__["default"] = ("//Built-in uniforms and attributes\n//https://threejs.org/docs/#api/en/renderers/webgl/WebGLProgram\n#define PI 3.14159265359\nprecision highp float;\nvarying vec4 vColor;\nuniform vec2 resolution;\nvarying vec2 vUv;\nuniform sampler2D uTex01;// テクスチャは sampler2D 型\nuniform sampler2D uTex02;// テクスチャは sampler2D 型\nuniform sampler2D uTex03;// テクスチャは sampler2D 型\nuniform float dispFactor;\n\nmat2 rotate2d(float _angle){\n  return mat2(cos(_angle),-sin(_angle),sin(_angle),cos(_angle));\n}\n\nvoid main() {\n\n  vec4 disp = texture2D(uTex03, vUv);\n  vec2 calcPos = vec2(-0.05) + vUv + rotate2d(PI) * vec2(disp.r / 10.0, disp.g / 10.0) + (1.0 - dispFactor) * 0.1;\n\n  vec4 _uTex01 = texture2D(uTex01, vUv);\n  vec4 _uTex02 = texture2D(uTex01, calcPos);\n  vec4 color = mix(_uTex01,_uTex02, dispFactor);\n  gl_FragColor = color;\n}");
 
 /***/ }),
 

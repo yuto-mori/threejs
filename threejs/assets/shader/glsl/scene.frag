@@ -1,5 +1,6 @@
 //Built-in uniforms and attributes
 //https://threejs.org/docs/#api/en/renderers/webgl/WebGLProgram
+precision highp float;
 varying vec4 vColor;
 uniform vec2 resolution;
 uniform float time;
